@@ -13,6 +13,7 @@ import { DarkCard } from 'components/Card'
 import Loader from 'components/Loader';
 import { SwapTokenForTokenModal } from 'components/ChartSidebar/SwapTokenForTokenModal'
 import Tooltip from 'components/Tooltip'
+import _ from 'lodash'
 import { abbreviateNumber } from 'components/BurntKiba'
 import moment from 'moment'
 import { toChecksum } from 'state/logs/utils'

@@ -44,6 +44,8 @@ export function OnboardingButton() {
         (window?.ethereum as any)?.removeListener('accountsChanged', handleNewAccounts);
       };
     }
+
+    return;
   }, []);
 
   const onClick = () => {

@@ -14,6 +14,8 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 
 const BaseWrapper = css`
   position: relative;
+  display:flex;
+  align-items:center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     justify-self: end;
   `};
