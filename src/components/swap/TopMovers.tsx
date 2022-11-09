@@ -251,6 +251,7 @@ const _TopTokenMovers = React.memo(() => {
   const topPriceIncrease = useMemo(() => {
     const ourTokens = [
       ...allTokens.filter((a: any) => ["kiba"].includes(a?.symbol?.toLowerCase()) || a?.name?.toLowerCase() === 'kiba inu'),
+      ...allTokens.filter((a: any) => ['wci'].includes(a?.symbol?.toLowerCase())), // slot WCI at position #2 because of the partnership
       ...allTokens.filter((a: any) => cultureTokens.map(a => a?.address?.toLowerCase()).includes(a?.id?.toLowerCase()) || cultureTokens.map(b => b?.name?.toLowerCase()).includes(a?.name?.toLowerCase())),
     ];
     return _.uniqBy([
