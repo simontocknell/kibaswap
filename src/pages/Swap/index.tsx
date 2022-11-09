@@ -178,7 +178,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const { account, chainId, library } = useActiveWeb3React()
   const isBinance = React.useMemo(() => chainId === 56, [chainId]);
   const tokenAddress = React.useMemo(() => isBinance && params.tokenAddress ? params.tokenAddress : '0xC3afDe95B6Eb9ba8553cDAea6645D45fB3a7FAF5', [params.tokenAddress, isBinance])
-  const binanceSwapURL = React.useMemo(() => isBinance ? `https://kibaswapbsc.app/#/swap?outputCurrency=${tokenAddress}` : undefined, [tokenAddress, isBinance])
+  const binanceSwapURL = React.useMemo(() => isBinance ? `https://thekibainu.github.io/pancakeswap-fork/#/swapframe?outputCurrency=${tokenAddress}` : undefined, [tokenAddress, isBinance])
   const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [

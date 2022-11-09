@@ -719,7 +719,7 @@ export const FomoPage = () => {
                   </span>}
 
                   {network === 'bsc' &&
-                    <ExternalLink href={`https://kibaswapbsc.app/#/swap?outputCurrency=${item.addr}`}>
+                    <ExternalLink href={`https://thekibainu.github.io/pancakeswap-fork/#/swapframe?outputCurrency=${item.addr}`}>
                       <DollarSign style={{ color: '#779681' }} />
                     </ExternalLink>}
                 </div>
