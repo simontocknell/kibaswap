@@ -196,10 +196,10 @@ function Web3StatusInner() {
       <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
         {hasPendingTransactions ? (
           <RowBetween>
-            <Text color={theme.text1}>
+            <Text style={{color:theme.text1}} color={theme.text1}>
               <Trans>{pending?.length} Pending</Trans>
             </Text>{' '}
-            <Loader stroke="white" />
+            <Loader stroke={theme.text1} />
           </RowBetween>
         ) : (
           <>

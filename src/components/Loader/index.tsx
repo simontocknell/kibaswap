@@ -34,6 +34,6 @@ export default function Loader({
   [k: string]: any
 }) {
   return (
-    <CSpinner {...rest}  component="span" size={size as 'sm' | undefined} aria-hidden="true"/>
+    <CSpinner color={stroke ?? ''} {...rest}  component="span" size={size as 'sm' | undefined} aria-hidden="true"/>
   )
 }
