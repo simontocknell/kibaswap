@@ -11,7 +11,9 @@ import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import Identicon from '../Identicon'
 import Loader from '../Loader'
+import MetaMaskOnboarding from '@metamask/onboarding';
 import { NetworkContextName } from '../../constants/misc'
+import {OnboardingButton} from './OnboardingButton'
 import PortisIcon from '../../assets/images/portisIcon.png'
 import { RowBetween } from '../Row'
 import { TransactionDetails } from '../../state/transactions/reducer'
@@ -218,6 +220,7 @@ function Web3StatusInner() {
       </Web3StatusError>
     )
   } else {
+    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
         <Text>
@@ -225,6 +228,9 @@ function Web3StatusInner() {
         </Text>
       </Web3StatusConnect>
     )
+    } else {
+      return <OnboardingButton />
+    }
   }
 }
 
