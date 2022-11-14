@@ -24,7 +24,6 @@ import { shortenAddress } from '../../utils'
 import useENSName from '../../hooks/useENSName'
 import { useHasSocks } from '../../hooks/useSocksBalance'
 import { useMemo } from 'react'
-import useTheme from 'hooks/useTheme'
 import { useWalletModalToggle } from '../../state/application/hooks'
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -43,7 +42,6 @@ const Web3StatusGeneric = styled(ButtonOutlined)`
   align-items: center;
   padding: 0.35rem;
   border-radius: 10px;
-  border-width: 0 !important;
   cursor: pointer;
   user-select: none;
   :focus {
@@ -62,25 +60,30 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 `
 
 const Web3StatusConnect = styled(Web3StatusGeneric) <{ faded?: boolean }>`
-  background: ${({ theme }) => theme.primary5};
   border: none;
-  padding: 7px;
+
   color: ${({ theme }) => theme.primaryText1};
-  font-weight: 500;
+  font-weight: 400;
 
   :hover,
   :focus {
-    border: none !Important;
-    background-color: ${({ theme }) => darken(0.05, theme.primary5)};
-    box-shadow: none;
+    color: ${({ theme }) => theme.primaryText1};
+    font-weight: 500;
+    
   }
 
   ${({ faded }) =>
     faded &&
     css`
+    
+      background-color: ${({ theme }) => theme.primary5};
+      border: 1px solid ${({ theme }) => theme.primary5};
       color: ${({ theme }) => theme.primaryText1};
+      
 
       :hover,
+        font-weight: 500;
+
       :focus {
         color: ${({ theme }) => darken(0.05, theme.primaryText1)};
       }
@@ -88,6 +91,7 @@ const Web3StatusConnect = styled(Web3StatusGeneric) <{ faded?: boolean }>`
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric) <{ pending?: boolean }>`
+  background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg1)};
   :before {
     content: '';
     position: absolute;
@@ -188,7 +192,7 @@ function Web3StatusInner() {
   }, [allTransactions])
 
   const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
-  const theme = useTheme()
+
   const hasPendingTransactions = !!pending.length
   const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
@@ -224,7 +228,7 @@ function Web3StatusInner() {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
         <Text>
-          <Trans>Connect to a wallet</Trans>
+          <Trans>Connect wallet</Trans>
         </Text>
       </Web3StatusConnect>
     )
