@@ -1,13 +1,22 @@
+import * as styles from '../AndyComponents/style.css'
+
 import { AlertOctagon, CheckCircle, Eye, EyeOff } from 'react-feather'
+import { MoPoolIcon, MobileChartsIcon, NavMagnifyingGlassIcon, PoolIcon2, StatsIcon, SwapIcon } from 'components/AndyComponents/icons'
 import { NavLink, NavLinkProps, useLocation } from 'react-router-dom'
 import React, { ReactNode, useState } from 'react'
+
+import { Box } from 'components/AndyComponents/Box'
 import { ExternalLink } from '../../theme'
+import { FlRow } from 'components/AndyComponents/Flex'
 import Menu from '../Menu'
+import { MenuDropdown } from './MenuDropdown'
 import NetworkCard from './NetworkCard'
 import Row from '../Row'
+import { SearchBarNav } from './HeaderPairSearch'
 import { SupportedChainId } from 'constants/chains'
 import Swal from 'sweetalert2'
 import { Text } from 'rebass'
+import { ToolsDropdown } from './toolsdropdown'
 import { Trans } from '@lingui/macro'
 import Web3Status from '../Web3Status'
 import { darken } from 'polished'
@@ -18,16 +27,6 @@ import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import useInterval from 'hooks/useInterval'
 import useTheme from 'hooks/useTheme'
-import { Box } from 'components/AndyComponents/Box'
-import { FlRow } from 'components/AndyComponents/Flex'
-import * as styles from '../AndyComponents/style.css'
-import { ToolsDropdown } from './toolsdropdown'
-import { MenuDropdown } from './MenuDropdown'
-import { SearchBarNav } from './HeaderPairSearch'
-import { MobileChartsIcon, MoPoolIcon, NavMagnifyingGlassIcon, PoolIcon2, StatsIcon, SwapIcon } from 'components/AndyComponents/icons'
-
-
-
 
 export type EmbedModel = {
   showTrending?: boolean
@@ -336,8 +335,8 @@ export default function Header() {
   const MobileTabs = () => {
     const { pathname } = useLocation()
     const { chainId } = useActiveWeb3React()
-   
-  
+
+
     const isPoolActive =
       pathname.startsWith('/pool') ||
       pathname.startsWith('/add') ||
@@ -346,39 +345,39 @@ export default function Header() {
       pathname.startsWith('/find')
 
     const isStatsActive =
-      pathname.startsWith('/dashboard') 
+      pathname.startsWith('/dashboard')
 
-      const isChartsActive =
+    const isChartsActive =
       pathname.startsWith('/selective') ||
       pathname.startsWith('/selective-charts') ||
       pathname.startsWith('/selective-charting')
-  
+
     return (
       <>
         <MenuItem href="/swap" isActive={pathname.startsWith('/swap')}>
-      
-        <SwapIcon />
-      
+
+          <SwapIcon />
+
         </MenuItem>
-        
-        
+
+
         <MenuItem href="/pool" id={'pool-nav-link'} isActive={isPoolActive}>
-        <PoolIcon2 />
+          <PoolIcon2 />
         </MenuItem>
 
         <MenuItem href="/dashboard" id={`stake-nav-link`} isActive={isStatsActive}>
-        <StatsIcon />
-          </MenuItem>
+          <StatsIcon />
+        </MenuItem>
 
-          <MenuItem href="/selective-charting" id={`chart-nav-link`} isActive={isChartsActive}>
-        <MobileChartsIcon />
-          </MenuItem>
+        <MenuItem href="/selective-charting" id={`chart-nav-link`} isActive={isChartsActive}>
+          <MobileChartsIcon />
+        </MenuItem>
 
-        {isMobile? <ToolsDropdown /> : null }
-          
-        
+        {isMobile ? <ToolsDropdown /> : null}
 
-          
+
+
+
 
 
       </>
@@ -392,60 +391,60 @@ export default function Header() {
   const [darkMode] = useDarkModeManager()
   const theme = useTheme()
 
- 
-  
+
+
   return (
     <>
-    <nav className={styles.nav}>
+      <nav className={styles.nav}>
         <Box display="flex" height="full" flexWrap="nowrap" alignItems="stretch">
           <Box className={styles.leftSideContainer}>
             <Box as="a" href="#/swap" className={styles.logoContainer}>
-            <img
-              width={isMobile ? '45px' : '50px'}
-              src={logo}
-              alt="logo"
-            />
+              <img
+                width={isMobile ? '45px' : '50px'}
+                src={logo}
+                alt="logo"
+              />
             </Box>
             <FlRow gap="8" display={{ sm: 'none', lg: 'flex' }}>
-        
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            <Trans>Swap</Trans>
-          </StyledNavLink>
-          <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/increase') ||
-              pathname.startsWith('/find')
-            }
-          >
-            <Trans>Pool</Trans>
-          </StyledNavLink>
 
-          {chainId && [SupportedChainId.MAINNET, SupportedChainId.BINANCE].includes(chainId) && (
-            <StyledNavLink id={`stake-nav-link`} to={'/dashboard'}>
-              <Trans>Stats</Trans>
-            </StyledNavLink>
-          )}
+              <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+                <Trans>Swap</Trans>
+              </StyledNavLink>
+              <StyledNavLink
+                id={`pool-nav-link`}
+                to={'/pool'}
+                isActive={(match, { pathname }) =>
+                  Boolean(match) ||
+                  pathname.startsWith('/add') ||
+                  pathname.startsWith('/remove') ||
+                  pathname.startsWith('/increase') ||
+                  pathname.startsWith('/find')
+                }
+              >
+                <Trans>Pool</Trans>
+              </StyledNavLink>
 
-          <StyledNavLink isActive={(match, { pathname }) =>
-            Boolean(match) ||
-            pathname.startsWith('/selective') ||
-            pathname.startsWith('/selective-charts') ||
-            pathname.startsWith('/selective-charting')
-          } id={`chart-nav-link`} to={'/selective-charting'}>
-            <Trans>Charts</Trans>
-          </StyledNavLink>
+              {chainId && [SupportedChainId.MAINNET, SupportedChainId.BINANCE].includes(chainId) && (
+                <StyledNavLink id={`stake-nav-link`} to={'/dashboard'}>
+                  <Trans>Stats</Trans>
+                </StyledNavLink>
+              )}
 
-          {isMobile? '' : <ToolsDropdown/>}
-          
-          </FlRow>
+              <StyledNavLink isActive={(match, { pathname }) =>
+                Boolean(match) ||
+                pathname.startsWith('/selective') ||
+                pathname.startsWith('/selective-charts') ||
+                pathname.startsWith('/selective-charting')
+              } id={`chart-nav-link`} to={'/selective-charting'}>
+                <Trans>Charts</Trans>
+              </StyledNavLink>
+
+              {isMobile ? '' : <ToolsDropdown />}
+
+            </FlRow>
           </Box>
 
-          
+
 
           {/* <div
             style={{
@@ -488,19 +487,19 @@ export default function Header() {
                 }} />
             }
           </div> */}
-           
-           <Box className={styles.middleContainer}>
 
-        <SearchBarNav/>
-        </Box>
-        
-        <Box className={styles.rightSideContainer}>
+          <Box className={styles.middleContainer}>
+
+            <SearchBarNav />
+          </Box>
+
+          <Box className={styles.rightSideContainer}>
             <FlRow gap="12">
               <Box display={{ sm: 'flex', xl: 'none' }}>
                 <SearchBarNav />
               </Box>
-        
-        {/* 
+
+              {/* 
         <Box className={styles.rightSideContainer}>
             <FlRow gap="12">
               <Box display={{ sm: 'flex', xl: 'none' }}>
@@ -511,25 +510,25 @@ export default function Header() {
  */}
 
 
-        
-        <Box display={{ sm: 'none', lg: 'flex' }}>
-              {isMobile? '' : <MenuDropdown />}
-              </Box>
-            <Box display={{ sm: 'flex', lg: 'flex' }}>
-            {!!account ? <NetworkCard /> : ''}
-            </Box>
-            <Box display={{ sm: 'flex', lg: 'flex' }}>
-            {isMobile? <MenuDropdown /> : null }
-            </Box>
-            <Box display={{ sm: 'flex', lg: 'flex' }}>
-           
-            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              
-              <Web3Status />
 
-            </AccountElement>
-            
-            </Box>
+              <Box display={{ sm: 'none', lg: 'flex' }}>
+                {isMobile ? '' : <MenuDropdown />}
+              </Box>
+              <Box display={{ sm: 'flex', lg: 'flex' }}>
+                {!!account ? <NetworkCard /> : ''}
+              </Box>
+              <Box display={{ sm: 'flex', lg: 'flex' }}>
+                {isMobile ? <MenuDropdown /> : null}
+              </Box>
+              <Box display={{ sm: 'flex', lg: 'flex' }}>
+
+                <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+
+                  <Web3Status />
+
+                </AccountElement>
+
+              </Box>
             </FlRow>
           </Box>
         </Box>
@@ -537,11 +536,11 @@ export default function Header() {
       <Box className={styles.mobileBottomBar}>
         <MobileTabs />
         <Box marginY="4">
-       
+
         </Box>
       </Box>
-      
-      
+
+
     </>
   )
 }
