@@ -131,6 +131,8 @@
     "@types/react": "17.0.44"
   },
   "scripts": {
+    "deploy":"yarn craco build && yarn gh pages -d build",
+    "deploy-to-new-remote": "yarn craco build && yarn gh-pages -o new -d build",
     "typescript": "tsc -p .",
     "compile-contract-types": "yarn compile-external-abi-types && yarn compile-v3-contract-types",
     "compile-external-abi-types": "typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
