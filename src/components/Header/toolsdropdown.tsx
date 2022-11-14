@@ -1,24 +1,17 @@
-import { Trans } from '@lingui/macro'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
-import { Box } from 'components/AndyComponents/Box'
-import { FlRow, Column } from 'components/AndyComponents/Flex'
+import * as styles from './MenuDropdown.css'
+
 import {
   BarChartIcon,
+  ChevronDownBagIcon,
+  ChevronUpIcon,
   DiscordIconMenu,
   EllipsisIcon,
   GithubIconMenu,
   GovernanceIcon,
-  TwitterIconMenu,
-  ChevronUpIcon,
-  ChevronDownBagIcon,
   MagnifyingGlassIcon,
   ToolsIcon,
+  TwitterIconMenu,
 } from 'components/AndyComponents/icons'
-import { body, bodySmall } from 'components/AndyComponents/common.css'
-import { themeVars } from 'theme/spinkles.css'
-import { ReactNode, useReducer, useRef, useState } from 'react'
-import { NavLink, NavLinkProps } from 'react-router-dom'
-import styled, { css } from 'styled-components/macro'
 import {
   ChevronDown,
   ChevronRight,
@@ -30,18 +23,22 @@ import {
   Sun,
   Tool,
 } from 'react-feather'
-import * as styles from './MenuDropdown.css'
+import { Column, FlRow } from 'components/AndyComponents/Flex'
+import { MenuHoverA, MenuHoverB } from './MenuHover'
+import { NavLink, NavLinkProps } from 'react-router-dom'
+import { ReactNode, useReducer, useRef, useState } from 'react'
+import { body, bodySmall } from 'components/AndyComponents/common.css'
+import styled, { css } from 'styled-components/macro'
+import { useIsMobileSp, useIsTabletSp } from 'components/AndyComponents/AndyHooks'
+
+import { Box } from 'components/AndyComponents/Box'
+import { IconWrapper } from 'theme'
 import { NavDropdown } from './NavDropdown'
 import { NavIcon } from './NavIcon'
+import { Trans } from '@lingui/macro'
+import { themeVars } from 'theme/spinkles.css'
 import { useDarkModeManager } from 'state/user/hooks'
-import { MenuHoverA, MenuHoverB } from './MenuHover'
-import { useIsMobileSp, useIsTabletSp } from 'components/AndyComponents/AndyHooks'
-import { IconWrapper } from 'theme'
-
-
-
-
-
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 
 const PrimaryMenuRow = ({
   to,

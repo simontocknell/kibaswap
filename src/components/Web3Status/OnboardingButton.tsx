@@ -1,17 +1,23 @@
+import React, {useMemo} from 'react';
+
 import {ButtonEmpty} from 'components/Button'
 import MetaMaskLogo from '../../assets/images/metamask.png'
 import MetaMaskOnboarding from '@metamask/onboarding';
-import React from 'react';
+import {useIsMobile} from 'pages/Swap/SelectiveCharting'
 
-const ONBOARD_TEXT = 'Click here to install MetaMask!';
 const CONNECT_TEXT = 'Connect';
 const CONNECTED_TEXT = 'Connected';
 
 export function OnboardingButton() {
-  const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
-  const [isDisabled, setDisabled] = React.useState(false);
-  const [accounts, setAccounts] = React.useState<string[]>([]);
-  const onboarding = React.useRef<MetaMaskOnboarding>();
+  const isMobile = useIsMobile()
+  const ONBOARD_TEXT = useMemo(() => 
+    isMobile ? 'Install Metamask' : 'Click here to install MetaMask!'
+  , [isMobile])
+  const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT)
+  const [isDisabled, setDisabled] = React.useState(false)
+  const [accounts, setAccounts] = React.useState<string[]>([])
+  const onboarding = React.useRef<MetaMaskOnboarding>()
+
 
   React.useEffect(() => {
     if (!onboarding.current) {
