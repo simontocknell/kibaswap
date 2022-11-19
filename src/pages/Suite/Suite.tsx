@@ -31,14 +31,14 @@ export const Suite = React.memo(() => {
   padding: 20px;
   `
   return (
-    <BlueCard style={{opacity:'.99', marginTop:-40, maxWidth:900, borderRadius: 30 }}>
+    <DarkCard style={{opacity:'.99', marginTop:-40, maxWidth:900, borderRadius: 30 }}>
       <div style={{display:'flex', justifyContent:'space-between', position:'sticky',  top:0, width:'100%'}}>
         <Header style={{ fontWeight: 'normal'}}>
           KibaTools&trade;
         </Header>
       </div>
           {isHolder && <iframe src={url} style={{height:'70vh', maxWidth:900, width: '100%', border: '1px solid transparent', borderRadius: 12}}/>} {!isHolder && <> {FrameText}</>}
-          </BlueCard>
+          </DarkCard>
   )
 })
 

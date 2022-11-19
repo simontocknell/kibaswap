@@ -67,7 +67,6 @@ export const Bridge = () => {
 
 
     return <DarkCard style={{ maxWidth: 600, color: themeVal.text1 }}>
-        <AutoColumn gap="lg">
             <AutoColumn gap="sm">
                 <TYPE.small>
                 <img
@@ -82,7 +81,6 @@ export const Bridge = () => {
                     {content}
                 </Wrapper>
             </AutoColumn>
-        </AutoColumn>
     </DarkCard>
 
 }

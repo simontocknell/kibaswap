@@ -55,11 +55,11 @@ export const searchBarInput = style([
     padding: '0',
     fontWeight: 'normal',
     fontSize: '16',
-    color: { default: 'textPrimary', placeholder: 'textTertiary' },
+    color: { default: 'textPrimary', placeholder: 'textSecondary' },
     border: 'none',
     background: 'none',
     lineHeight: '24',
-    height: 'full',
+    height: '12',
 
   }),
 ])

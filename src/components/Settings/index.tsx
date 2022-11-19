@@ -1,7 +1,7 @@
 import { RowBetween, RowFixed } from '../Row'
 import { Settings, X } from 'react-feather'
 import { Trans, t } from '@lingui/macro'
-import styled, { ThemeContext } from 'styled-components/macro'
+import styled, { css, ThemeContext } from 'styled-components/macro'
 import { useContext, useRef, useState } from 'react'
 import { useExpertModeManager, useSetAutoSlippage, useSetFrontrunProtectionEnabled, useUserDetectRenounced, useUserSingleHopOnly } from '../../state/user/hooks'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
@@ -19,10 +19,12 @@ import { Text } from 'rebass'
 import Toggle from '../Toggle'
 import TransactionSettings from '../TransactionSettings'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
+import { FlyoutAlignment } from 'components/Menu'
+import { Box } from 'components/AndyComponents/Box'
 
 const StyledMenuIcon = styled(Settings)`
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
 
   > * {
     stroke: ${({ theme }) => theme.text2};
@@ -34,8 +36,8 @@ const StyledMenuIcon = styled(Settings)`
 `
 
 const StyledCloseIcon = styled(X)`
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
   :hover {
     cursor: pointer;
   }
@@ -54,7 +56,7 @@ const StyledMenuButton = styled.button`
   margin: 0;
   padding: 0;
   border-radius: 0.5rem;
-  height: 20px;
+  height: 24px;
 
   :hover,
   :focus {
@@ -114,6 +116,37 @@ const ModalContentWrapper = styled.div`
   padding: 2rem 0;
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 20px;
+`
+const MenuFlyout2 = styled.span<{ flyoutAlignment?: FlyoutAlignment }>`
+  min-width: 20.125rem;
+  max-height: 370px;
+  overflow: auto;
+  background-color: ${({ theme }) => theme.bg1};
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
+  border: 1px solid ${({ theme }) => theme.bg0};
+  border-radius: 12px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  position: absolute;
+  top: 3rem;
+  z-index: 100;
+
+  ${({ flyoutAlignment = FlyoutAlignment.RIGHT }) =>
+    flyoutAlignment === FlyoutAlignment.RIGHT
+      ? css`
+          right: 0rem;
+        `
+      : css`
+          left: 0rem;
+        `};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    bottom: unset;
+    right: 0;
+    left: unset;
+  `};
 `
 
 export default function  SettingsTab({ placeholderSlippage }: { placeholderSlippage: Percent }) {
@@ -177,7 +210,9 @@ export default function  SettingsTab({ placeholderSlippage }: { placeholderSlipp
     };
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
-    <StyledMenu ref={node as any}>
+    
+   <StyledMenu ref={node as any}>
+  
       <Modal isOpen={showConfirmation} onDismiss={onDismissClick} maxHeight={100}>
         <ModalContentWrapper>
           <AutoColumn gap="lg">
@@ -229,8 +264,8 @@ export default function  SettingsTab({ placeholderSlippage }: { placeholderSlipp
         ) : null}
       </StyledMenuButton>
       {open && (
-        <MenuFlyout>
-          <AutoColumn gap="md" style={{ padding: '1rem' }}>
+        <MenuFlyout2>
+          <AutoColumn gap="md" style={{ padding: '1rem', display: 'inline-block' }}>
             <Text fontWeight={600} fontSize={14}>
               <Trans>Transaction Settings</Trans>
             </Text>
@@ -332,7 +367,7 @@ export default function  SettingsTab({ placeholderSlippage }: { placeholderSlipp
               />
             </RowBetween>
           </AutoColumn>
-        </MenuFlyout>
+        </MenuFlyout2>
       )}
     </StyledMenu>
   )

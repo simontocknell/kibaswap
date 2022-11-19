@@ -175,6 +175,33 @@ export const ButtonOutlined = styled(Base)`
     cursor: auto;
   }
 `
+export const ButtonMetamask = styled(Base)`
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.bg0};
+  color: ${({ theme }) => theme.text1};
+  font-family: 'Inter Var'
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 8px 12px;
+
+  &:focus {
+    text-decoration: none;
+  }
+  &:hover {
+    background-color: ${({ theme }) => theme.andyBG};
+
+  }
+  &:active {
+    text-decoration: none;
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
 
 export const ButtonYellow = styled(Base)`
   background-color: ${({ theme }) => theme.yellow3};

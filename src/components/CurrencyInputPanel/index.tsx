@@ -31,13 +31,12 @@ import useTheme from '../../hooks/useTheme'
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '5px' : '5px')};
+  border-radius: ${({ hideInput }) => (hideInput ? '12px' : '12px')};
   background-color: ${({ theme, hideInput }) => (hideInput ? theme.bg6 : 'transparent')};
-  background: ${props => props.theme.blue4};
+  background: ${props => props.theme.bg8};
   z-index: 1;
   border: 0px solid #637EEA;
   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-  box-shadow: 0px 0px 3px rgba(99, 126, 234, 1);
 `
 const StyledLogo = styled.img`
   height: 16px;
@@ -48,8 +47,7 @@ const FixedContainer = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
-  border-radius: 0px;
-  background-color: ${({ theme }) => theme.bg0} !important;
+  background-color: ${({ theme }) => theme.bg0};
   opacity: 0.95;
   display: flex;
   align-items: center;
@@ -58,7 +56,7 @@ const FixedContainer = styled.div`
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
-  border-radius: ${({ hideInput }) => (hideInput ? '4px' : '4px')};
+  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '8px')};
   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
   :focus,
   :hover {

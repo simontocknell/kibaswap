@@ -24,7 +24,7 @@ export const darkTheme22: Theme22 = {
         stateOverlayHover: `rgba(153,161,189,0.08)`,
 
         textPrimary: '#FFFFFF',
-        textSecondary: vars.color.grey300,
+        textSecondary: '#565A69',
         textTertiary: vars.color.grey500,
     },
     shadows: {
@@ -34,5 +34,6 @@ export const darkTheme22: Theme22 = {
         tooltip: '0px 4px 16px rgba(255, 255, 255, 0.2)',
         deep: '12px 16px 24px rgba(0, 0, 0, 0.24), 12px 8px 12px rgba(0, 0, 0, 0.24), 4px 4px 8px rgba(0, 0, 0, 0.32)',
         shallow: '4px 4px 10px rgba(0, 0, 0, 0.24), 2px 2px 4px rgba(0, 0, 0, 0.12), 1px 2px 2px rgba(0, 0, 0, 0.12)',
+        body: '4px 4px 10px rgba(0, 0, 0, 0.24), 2px 2px 4px rgba(0, 0, 0, 0.12), 1px 2px 2px rgba(0, 0, 0, 0.12)',
     },
 }

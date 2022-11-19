@@ -32,6 +32,7 @@ export const DarkGreyCard = styled(Card)`
 `
 export const DarkCard = styled(Card)`
   background-color: ${({ theme }) => theme.bg0};
+  color: ${({ theme }) => theme.text1};
 `
 
 export const OutlineCard = styled(Card)`

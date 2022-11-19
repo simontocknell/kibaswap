@@ -73,6 +73,7 @@ import { useUSDCValueV2AndV3 } from '../../hooks/useUSDCPrice'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { warningSeverity } from '../../utils/prices'
 import { Bridge } from 'components/AccountDetails/Bridge'
+import SwapSubHeader from 'components/swap/SwapSubHeader'
 
 
 // In addition to the navigator object, we also have a clipboard
@@ -129,6 +130,7 @@ export const InternalCardWrapper = styled(StyledInternalLink)`
   width:100%;
   margin-right: 16px;
   padding:3px;
+  
   align-items:center;
   :hover {
     cursor: pointer;
@@ -700,13 +702,15 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
 
-      <AppBody style={{ background: 'none', marginTop: 0, paddingTop: 0, position: 'relative', minWidth: '45%', maxWidth: view === 'bridge' ? 690 : 480 }}>
+      <AppBody style={{ background: 'none', marginTop: 0, paddingTop: 0, position: 'relative'}}>
         <SwapHeader view={view} onViewChange={onViewChangeFn} allowedSlippage={allowedSlippage} />
+
         <AddressManager isOpen={showAddressManager} onDismiss={dismissAddressManager} />
         {!isBinance && (
           <>
-            {view === 'swap' && <Wrapper id="swap-page" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }}>
+                  {view === 'swap' && chainId && chainId === 1 && <SwapSubHeader allowedSlippage={allowedSlippage}/>}
 
+            {view === 'swap' && <Wrapper id="swap-page" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, paddingTop: 5}}>
               <ConfirmSwapModal
                 isOpen={showConfirm}
                 trade={trade}
@@ -720,10 +724,9 @@ export default function Swap({ history }: RouteComponentProps) {
                 swapErrorMessage={swapErrorMessage}
                 onDismiss={handleConfirmDismiss}
               />
+            
 
-              <GasSelectorModal isOpen={gasSettingsOpen} onDismiss={closeGasSettings} />
-
-              {chainId && chainId === 1 && <small style={{ color: theme.text1, cursor: 'pointer', display: 'flex', marginBottom: 5, alignItems: 'center', justifyContent: 'flex-end' }} onClick={openGasSettings}>Customize Gas <ArrowUpRight /></small>}
+              
               <AutoColumn gap={'xs'}>
                 {chainId && chainId === 1 && useAutoSlippage && automaticCalculatedSlippage >= 0 && <Badge style={{ marginBottom: 3 }} variant={BadgeVariant.DEFAULT}>
                   Using {automaticCalculatedSlippage}% Auto Slippage</Badge>}
@@ -1017,19 +1020,19 @@ export default function Swap({ history }: RouteComponentProps) {
         )
         }
         {view === 'bridge' && (
-          <Wrapper id="bridgepage" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }}>
+          <Wrapper id="bridgepage" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0  }}>
             <AutoColumn>
-              <iframe style={{ maxWidth: 750, margin: '0 auto', width: '100%', height: 520, borderRadius: 24 }} src="https://kiba-inu-bridgev2.netlify.app/"></iframe>
+              <iframe style={{  margin: '0 auto', width: '100%', height: 520, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }} src="https://kiba-inu-bridgev2.netlify.app/"></iframe>
             </AutoColumn>
           </Wrapper>
         )}
         {view === 'crosschain' &&
-          <Wrapper style={{ width: '100%', background: theme.bg6, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }}>
+          <Wrapper style={{ width: '100%', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0 }}>
             <Bridge />
           </Wrapper>}
 
         {view === 'limit' &&
-          <Wrapper style={{ width: '100%', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }}>
+          <Wrapper style={{ width: '100%', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0  }}>
             <LimitOrders />
           </Wrapper>}
         {!!isBinance && view === 'swap' && binanceSwapURL &&

@@ -37,6 +37,7 @@ const themeContractValues = {
     tooltip: '',
     deep: '',
     shallow: '',
+    body: '',
   },
 }
 
@@ -175,7 +176,7 @@ export const vars = createGlobalTheme(':root', {
     green400: '#1A9550',
     violet200: '#BDB8FA',
     violet400: '#7A7BEB',
-    grey900: '#0e121c',
+    grey900: '#302F32',
     grey800: '#141B2B',
     grey700: '#293249',
     grey500: '#5E6887',

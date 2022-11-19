@@ -213,7 +213,7 @@ background-color: ${({ theme }) => theme.bg1};
 border: 1px solid ${({ theme }) => theme.bg3};
 box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
   0px 24px 32px rgba(0, 0, 0, 0.01);
-border-radius: 12px;
+border-radius: 0px 0px 12px 12px;
 display: flex;
 flex-direction: column;
 font-size: 12px;
@@ -324,12 +324,13 @@ React.useEffect(() => {
             borderBottomWidth={isOpen || isMobileOrTablet ? '0px' : '1px'}
             onClick={() => !isOpen && toggleOpen()}
             gap="12"
+            marginTop="4"
           >
             <Box className={showCenteredSearchContent ? styles.searchContentCentered : styles.searchContentLeftAlign}>
-              <Box display={{ sm: 'none', md: 'flex' }}>
+              <Box display={{ sm: 'none', md: 'flex' }} color="textSecondary">
                 <MagnifyingGlassIcon />
               </Box>
-              <Box display={{ sm: 'flex', md: 'none' }} color="textTertiary" onClick={toggleOpen}>
+              <Box display={{ sm: 'flex', md: 'none' }} color="textSecondary" onClick={toggleOpen}>
                 <ChevronLeftIcon />
               </Box>
             </Box>
@@ -344,6 +345,7 @@ React.useEffect(() => {
                 value={searchTerm}
                 ref={searchRef}
                 width={ isOpen ? 'full' : '160'}
+                
               />
             
           </FlRow>

@@ -71,7 +71,7 @@ const AppWrapper = styled.div<{ embedModel: EmbedModel }>`
   background-repeat: no-repeat;
   position: absolute;
   height: ${props => props.embedModel.embedMode ? 'auto' : '150vh'}; 
-  background: ${({ theme }) => theme.blue4};
+  background: ${({ theme }) => theme.bg7};
   background-size: 100% 200%;
   width:100%;
   height: 100vh;
@@ -104,6 +104,7 @@ const BodyWrapper = styled.div<{ embed: boolean }>`
   align-items: center;
   flex: 1;
   z-index: 1;
+
   margin-top:${(props) => props.embed ? '0px' : window.location.href.includes('charts') || window.location.href.includes('charting') ? '1.2rem' : '4rem'};
 
   ${({ theme, embed }) => theme.mediaWidth.upToSmall`
@@ -115,6 +116,7 @@ const BodyWrapper = styled.div<{ embed: boolean }>`
   padding:${embed ? '1px' : '6rem 16px 16px 16px'};
   `}
 `
+
 
 const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -185,7 +187,8 @@ export default function App() {
                       <img style={{maxWidth:200}} src={'https://kibainu.space/wp-content/uploads/2021/11/photo_2021-11-07-22.25.47.jpeg'} />
                   </div> 
                 */}
-                  <BodyWrapper embed={embedModel.embedMode}>
+                
+                  <BodyWrapper  embed={embedModel.embedMode}>
                     <SwapTokenForTokenComponent />
                     <Popups />
                     {!isMobile && <>

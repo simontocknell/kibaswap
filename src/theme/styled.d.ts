@@ -86,6 +86,9 @@ export interface Colors {
   bg4: Color
   bg5: Color
   bg6: Color
+  bg7: Color
+  bg8: Color
+  bg9: Color
   bgSwapHeader: Color
   bgmenu: Color
   //specialtycolors
@@ -133,6 +136,9 @@ declare module 'styled-components/macro' {
 
     // shadows
     shadow1: string
+    shadow2: string
+    shadowD: string;
+
     //chart page
     chartBgDark: string
     chartBgLight: string

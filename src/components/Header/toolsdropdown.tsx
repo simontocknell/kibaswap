@@ -26,9 +26,9 @@ import {
 import { Column, FlRow } from 'components/AndyComponents/Flex'
 import { MenuHoverA, MenuHoverB } from './MenuHover'
 import { NavLink, NavLinkProps } from 'react-router-dom'
-import { ReactNode, useReducer, useRef, useState } from 'react'
+import { ReactNode, useContext, useReducer, useRef, useState } from 'react'
 import { body, bodySmall } from 'components/AndyComponents/common.css'
-import styled, { css } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 import { useIsMobileSp, useIsTabletSp } from 'components/AndyComponents/AndyHooks'
 
 import { Box } from 'components/AndyComponents/Box'
@@ -39,6 +39,8 @@ import { Trans } from '@lingui/macro'
 import { themeVars } from 'theme/spinkles.css'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+
+
 
 const PrimaryMenuRow = ({
   to,
@@ -140,7 +142,7 @@ export const ToolsDropdown = () => {
   const isMobile = useIsMobileSp()
 
 
-
+  const theme = useContext(ThemeContext)
   const ref = useRef<HTMLDivElement>(null)
   useOnClickOutside(ref, isOpen ? toggleOpen : undefined)
 
@@ -161,7 +163,7 @@ export const ToolsDropdown = () => {
         {isMobile? null : <MenuHoverA isActive={isOpen} onClick={toggleOpen}>
            <FlRow><Trans>Tools </Trans><ChevronWrapper>
             <MenuDivider/>
-            {isOpen ? <ChevronUp size={24}/> : <ChevronDown size={20}/>}
+            {isOpen ? <ChevronUp size={24} color={theme.text2}  /> : <ChevronDown size={20} color={theme.text2} />}
           </ChevronWrapper></FlRow>
         </MenuHoverA>}
 

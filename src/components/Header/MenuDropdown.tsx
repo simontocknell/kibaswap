@@ -277,13 +277,15 @@ export const MenuDropdown= () => {
                     </PrimaryMenuRow>
                     <Box>
                   <ToggleMenuItem onClick={() => toggleDarkMode()}>
-                          <div>{darkMode ? <Trans>Light Theme</Trans> : <Trans>Dark Theme</Trans>}</div>
+                          <div>{darkMode ? <Trans>Light Theme </Trans> : <Trans>Dark Theme </Trans>}</div>
+                          &nbsp;
                           {darkMode ? <Moon opacity={0.6} size={16} /> : <Sun opacity={0.6} size={16} />}
                         </ToggleMenuItem>
                         <ToggleMenuItem onClick={() => setMenu('lang')}>
                           <div>
                             <Trans>Language</Trans>
                           </div>
+                          &nbsp;
                           <ChevronRight size={16} opacity={0.6} />
                         </ToggleMenuItem>
                   </Box>

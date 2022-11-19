@@ -130,17 +130,20 @@ function KibaColors(darkMode: boolean): Colors {
     text4: darkMode ? '#fff' : '#18181E',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
     textPrimary: darkMode ? '#fff' : '#18181E',
-    textSecondary: darkMode ? '#fff' : '#565A69',
+    textSecondary: darkMode ? '#66696E' : '#565A69',
 
 
     // backgrounds / greys
-    bg0: darkMode ? '#252632' : '#f5f5f5',
-    bg1: darkMode ? '#18181E' : '#f5f5f5',
+    bg0: darkMode ? '#3E3D40' : '#F9F9FB',
+    bg1: darkMode ? '#151516' : '#F9F9FB',
     bg2: darkMode ? '#F76C1D' : '#eee',
     bg3: darkMode ? '#40444F' : '#fff',
     bg4: darkMode ? '#848484' : '#fff',
     bg5: darkMode ? '#4F4F62' : '#fff',
-    bg6: darkMode ? '#30313D' : 'rgba(255,255,255,0.8)',
+    bg6: darkMode ? '#272628' : 'rgba(255,255,255,0.8)',
+    bg7: darkMode ? '#1D1D1F' : 'linear-gradient(-45deg, #B9CEF7, #F6FAF9)',
+    bg8: darkMode ? '#302F32' : '#eee',
+    bg9: darkMode ? 'rgba(255,255,255, 0.08)' : '#FFF',
     bgSwapHeader: darkMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.08)',
     bgmenu: darkMode ? '#F76C1D' : '#fff',
 
@@ -206,11 +209,14 @@ function theme(darkMode: boolean): DefaultTheme {
 
     //shadows
     shadow1: darkMode ? '#000' : '#2F80ED',
-    chartTableBg: darkMode ? 'linear-gradient(rgb(35 40 55),rgb(17 19 32))' : 'linear-gradient(white, rgb(255 255 255))',
-    chartSidebar: darkMode ? 'linear-gradient(rgb(27 31 42),rgb(17 19 32))' : 'linear-gradient(#f5f5f5,rgb(255 255 255))',
+    shadow2: darkMode ?  '' : '', 
+    shadowD: darkMode? '0px 0px 100px rgb(247 108 29 / 6%)' : '',
+
+    chartTableBg: darkMode ? '#272628' : 'linear-gradient(white, rgb(255 255 255))',
+    chartSidebar: darkMode ? '#272628' : 'linear-gradient(#f5f5f5,rgb(255 255 255))',
 
     chartBgLight: '#f5f5f5',
-    chartBgDark: 'linear-gradient(rgb(35 40 55),rgb(17 19 32))',
+    chartBgDark: '#3E3D40',
     // media queries
     mediaWidth: mediaWidthTemplates,
 
@@ -256,7 +262,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={600} color={'text1'} {...props} />
   },
   black(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text1'} {...props} />
+    return <TextWrapper fontWeight={500} color={'textSecondary'} {...props} />
   },
   white(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'white'} {...props} />

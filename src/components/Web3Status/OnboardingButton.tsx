@@ -1,9 +1,10 @@
 import React, {useMemo} from 'react';
 
-import {ButtonEmpty} from 'components/Button'
+import {ButtonEmpty, ButtonMetamask} from 'components/Button'
 import MetaMaskLogo from '../../assets/images/metamask.png'
 import MetaMaskOnboarding from '@metamask/onboarding';
 import {useIsMobile} from 'pages/Swap/SelectiveCharting'
+
 
 const CONNECT_TEXT = 'Connect';
 const CONNECTED_TEXT = 'Connected';
@@ -11,7 +12,7 @@ const CONNECTED_TEXT = 'Connected';
 export function OnboardingButton() {
   const isMobile = useIsMobile()
   const ONBOARD_TEXT = useMemo(() => 
-    isMobile ? 'Install Metamask' : 'Click here to install MetaMask!'
+    isMobile ? 'Add Metamask' : 'Add Metamask'
   , [isMobile])
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT)
   const [isDisabled, setDisabled] = React.useState(false)
@@ -63,8 +64,8 @@ export function OnboardingButton() {
     }
   };
   return (
-    <ButtonEmpty style={{padding:5}} disabled={isDisabled} onClick={onClick}>
-      <img src={MetaMaskLogo} style={{maxWidth:30}} /> &nbsp; {buttonText}
-    </ButtonEmpty>
+    <ButtonMetamask style={{padding:10}} disabled={isDisabled} onClick={onClick}>
+        {buttonText} &nbsp; <img src={MetaMaskLogo} style={{maxWidth:20}} />
+    </ButtonMetamask>
   );
 }

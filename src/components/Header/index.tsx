@@ -161,6 +161,7 @@ export const StyledAnchorLink = styled.a`
   width: fit-content;
   margin: 0 12px;
   font-weight: 500;
+  
 
   &.${activeClassName} {
     border-radius: .75rem;
