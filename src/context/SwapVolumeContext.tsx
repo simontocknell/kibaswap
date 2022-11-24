@@ -2,6 +2,7 @@ import { CurrencyAmount, WETH9 } from '@uniswap/sdk-core'
 import React, { useCallback } from 'react'
 
 import _ from 'lodash'
+import moment from 'moment'
 import { useCurrency } from 'hooks/Tokens'
 import useInterval from 'hooks/useInterval'
 import useLast from 'hooks/useLast'
@@ -30,15 +31,23 @@ export const SwapVolumeContextProvider = ({ children, chainId }: { children: any
     const intervalFn = (
         React.useCallback(
             async (isIntervalledCallback: boolean) => {
-                console.log('interval function->totalSwapVolume->', ethRelayed.formatted)
-                if (relayer) {
+                const relayerFn = relayer?.totalEthRelayed
+                const lastTimeFetched = trackingMap.current.get('lastFetched') ?? null 
+                // do not fetch more than one time per minute
+                if (Boolean(lastTimeFetched) && moment(lastTimeFetched).add(1, 'minute').toDate() > new Date()) {
+                    return;
+                }
+                if (relayer && relayerFn && typeof relayerFn === 'function') {
+                    console.log(`Relayer is fetching the latest swap volume`)
                     setRefreshing(true)
-                    relayer.totalEthRelayed().then((response: any) => {
+                    // set the last time we fetched
+                    trackingMap.current.set('lastFetched', new Date().getTime())
+                    relayerFn().then((response: any) => {
                         const formattedEth = parseFloat(utils.formatEther(response)).toFixed(6);
                         setEthRelayed({ type: "UPDATE", payload: { formatted: formattedEth, value: response } });
-                        setRefreshing(false)
                     }).catch((e: unknown) => {
                         console.error(`[useSwapVolume]`, e)
+                    }).finally(() => {
                         setRefreshing(false)
                     })
                 }
@@ -51,9 +60,10 @@ export const SwapVolumeContextProvider = ({ children, chainId }: { children: any
         const needsRefetch = chainId && chainId != priorChainId;
         if (initialized && !needsRefetch) return
 
-        if (needsRefetch)
+        if (needsRefetch) {
             console.log(`[SwapVolumeContextProvider] - Refetch swapVolume due to chainId change, prior: ${priorChainId}, current: ${chainId}`);
-
+        }
+        
         if ((relayer && !initialized) || needsRefetch) {
             const finished = () => setInitialized(true)
             intervalFn(true).then(finished)
@@ -63,7 +73,6 @@ export const SwapVolumeContextProvider = ({ children, chainId }: { children: any
     React.useEffect(() => {
         // this will keep the swap volume consistently updating, every 5 minutes or so.
         const interval = setInterval(async () => {
-            console.log(`[SwapVolumeContextProvider] - Run Interval Update on Swap Volume`)
             await intervalledFunction()
         }, 60000)
         return () => clearInterval(interval)
