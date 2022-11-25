@@ -11,7 +11,7 @@ import { FlRow } from 'components/AndyComponents/Flex'
 import { LoadingSkeleton } from 'pages/Pool/styleds'
 import { MenuItem } from 'components/SearchModal/styleds'
 import { NavIcon } from './NavIcon'
-import React, {  } from 'react'
+import React, { } from 'react'
 import axios from 'axios'
 import clsx from 'clsx'
 import { darken } from 'polished'
@@ -302,45 +302,43 @@ user-select: none;
         className={styles.searchBarContainer}
         display={{ sm: isOpen ? 'inline-block' : 'none', xl: 'inline-block' }}
       >
-          <FlRow
-            className={clsx(
-              ` ${styles.searchBar} ${!isOpen && !isMobile && magicalGradientOnHover} ${
-                isMobileOrTablet && (isOpen ? styles.visible : styles.hidden)
-              }`
-            )}
-            borderRadius={isOpen || isMobileOrTablet ? undefined : '12'}
-            borderTopRightRadius={isOpen && !isMobile ? '12' : undefined}
-            borderTopLeftRadius={isOpen && !isMobile ? '12' : undefined}
-            borderBottomWidth={isOpen || isMobileOrTablet ? '0px' : '1px'}
-            onClick={() => !isOpen && toggleOpen()}
-            gap="12"
-            marginTop="4"
-          >
-            <Box className={showCenteredSearchContent ? styles.searchContentCentered : styles.searchContentLeftAlign}>
-              <Box display={{ sm: 'none', md: 'flex' }} color="textSecondary">
-                <MagnifyingGlassIcon />
-              </Box>
-              <Box display={{ sm: 'flex', md: 'none' }} color="textSecondary" onClick={toggleOpen}>
-                <ChevronLeftIcon />
-              </Box>
+        <FlRow
+          className={clsx(
+            ` ${styles.searchBar} ${!isOpen && !isMobile && magicalGradientOnHover} ${isMobileOrTablet && (isOpen ? styles.visible : styles.hidden)
+            }`
+          )}
+          borderRadius={isOpen || isMobileOrTablet ? undefined : '12'}
+          borderTopRightRadius={isOpen && !isMobile ? '12' : undefined}
+          borderTopLeftRadius={isOpen && !isMobile ? '12' : undefined}
+          borderBottomWidth={isOpen || isMobileOrTablet ? '0px' : '1px'}
+          onClick={() => !isOpen && toggleOpen()}
+          gap="12"
+          marginTop="4"
+        >
+          <Box className={showCenteredSearchContent ? styles.searchContentCentered : styles.searchContentLeftAlign}>
+            <Box display={{ sm: 'none', md: 'flex' }} color="textSecondary">
+              <MagnifyingGlassIcon />
             </Box>
-              <Box
-                as="input"
-                placeholder={'Search Tokens'}
-                onChange={
-                  onTermChanged}
-                className={`${styles.searchBarInput} ${
-                  showCenteredSearchContent ? styles.searchContentCentered : styles.searchContentLeftAlign
-                }`}
-                value={searchTerm}
-                ref={searchRef}
-                width={ isOpen ? 'full' : '160'}
-                
-              />
-              <svg style={{ position: 'absolute', right: 5 }} xmlns="http://www.w3.org/2000/svg" width="22" height="20" aria-hidden="true" className="mr-1 header-search-key-slash"><path fill="none" stroke="#979A9C" opacity=".4" d="M3.5.5h12c1.7 0 3 1.3 3 3v13c0 1.7-1.3 3-3 3h-12c-1.7 0-3-1.3-3-3v-13c0-1.7 1.3-3 3-3z"></path><path fill="#979A9C" d="M11.8 6L8 15.1h-.9L10.8 6h1z"></path></svg>
+            <Box display={{ sm: 'flex', md: 'none' }} color="textSecondary" onClick={toggleOpen}>
+              <ChevronLeftIcon />
+            </Box>
+          </Box>
+          <Box
+            as="input"
+            placeholder={'Search Tokens'}
+            onChange={
+              onTermChanged}
+            className={`${styles.searchBarInput} ${showCenteredSearchContent ? styles.searchContentCentered : styles.searchContentLeftAlign
+              }`}
+            value={searchTerm}
+            ref={searchRef}
+            width={isOpen ? 'full' : '160'}
 
-          </FlRow>
-          <Box className={clsx(isOpen ? styles.visible : styles.hidden)}>
+          />
+          <svg style={{ position: 'absolute', right: 5 }} xmlns="http://www.w3.org/2000/svg" width="22" height="20" aria-hidden="true" className="mr-1 header-search-key-slash"><path fill="none" stroke="#979A9C" opacity=".4" d="M3.5.5h12c1.7 0 3 1.3 3 3v13c0 1.7-1.3 3-3 3h-12c-1.7 0-3-1.3-3-3v-13c0-1.7 1.3-3 3-3z"></path><path fill="#979A9C" d="M11.8 6L8 15.1h-.9L10.8 6h1z"></path></svg>
+
+        </FlRow>
+        <Box className={clsx(isOpen ? styles.visible : styles.hidden)}>
           {isOpen && (
             <MenuFlyout isMobile={isMobile}>
 
