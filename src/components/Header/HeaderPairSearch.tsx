@@ -260,7 +260,7 @@ user-select: none;
     }
 
     const focusKeyhandler = (event: KeyboardEvent) => {
-      if (event.key === '/' && event?.target?.nodeName === 'BODY') {
+      if (event.key === '/' && (event?.target as any)?.nodeName === 'BODY') {
         event.preventDefault()
         searchRef?.current?.focus()
         if (!isOpen) {
