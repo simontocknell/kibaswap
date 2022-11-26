@@ -1,11 +1,12 @@
+import { blockWalletConnector, fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import INJECTED_ICON_URL from '../assets/images/arrow-right.svg'
 import COINBASE_ICON_URL from '../assets/images/coinbaseWalletIcon.svg'
 import FORTMATIC_ICON_URL from '../assets/images/fortmaticIcon.png'
+import INJECTED_ICON_URL from '../assets/images/arrow-right.svg'
 import METAMASK_ICON_URL from '../assets/images/metamask.png'
 import PORTIS_ICON_URL from '../assets/images/portisIcon.png'
 import WALLETCONNECT_ICON_URL from '../assets/images/walletConnectIcon.svg'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 
 interface WalletInfo {
   connector?: AbstractConnector
@@ -81,4 +82,13 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     color: '#4A6C9B',
     mobile: true,
   },
+  BLOCK_WALLET: {
+    connector: blockWalletConnector as any,
+    name: "BlockWallet",
+    iconURL: 'https://miro.medium.com/max/2400/1*F_yAh04CuRL4C0hK6SdH3A.png',
+    mobile: true,
+    description: "Login using BlockWallet",
+    color: '#000',
+    href: null
+  }
 }

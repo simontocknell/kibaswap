@@ -1,7 +1,7 @@
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { ExternalLink, LinkStyledButton, TYPE } from '../../theme'
 import React, { useCallback, useContext } from 'react'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
+import { blockWalletConnector, fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
 import styled, { ThemeContext } from 'styled-components/macro'
 
 import { AutoRow } from '../Row'
@@ -11,6 +11,7 @@ import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
 import Copy from './Copy'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import Identicon from '../Identicon'
+import { InjectedConnector } from '@web3-react/injected-connector'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import PortisIcon from '../../assets/images/portisIcon.png'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
@@ -18,12 +19,11 @@ import { Trans } from '@lingui/macro'
 import Transaction from './Transaction'
 import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import { clearAllTransactions } from '../../state/transactions/actions'
+import { disconnect } from 'process'
 import { shortenAddress } from '../../utils'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAppDispatch } from 'state/hooks'
 import { useWeb3React } from '@web3-react/core'
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { disconnect } from 'process'
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -237,21 +237,29 @@ export default function AccountDetails({
   function formatConnectorName() {
     const { ethereum } = window
     const isMetaMask = !!(ethereum && ethereum.isMetaMask)
-    const name = Object.keys(SUPPORTED_WALLETS)
+    let name = Object.keys(SUPPORTED_WALLETS)
       .filter(
         (k) =>
           SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'METAMASK'))
       )
       .map((k) => SUPPORTED_WALLETS[k].name)[0]
+
+      if ((ethereum as any)?.isBlockWallet) {
+        name = "BlockWallet"
+      }
     return (
-      <WalletName>
+      <WalletName>      
         <Trans>Connected with {name}</Trans>
       </WalletName>
     )
   }
 
   function getStatusIcon() {
-    if (connector === injected) {
+    if ((window?.ethereum as any)?.isBlockWallet) {
+      <IconWrapper size={16}>
+        <img src={'chrome-extension://bopcbmipnjdcdfflfgjdgdjejmgpoaab/static/media/logo.7b4f72af.svg'} alt={'WalletConnect logo'} />
+      </IconWrapper>
+    } else if (connector === injected) {
       return (
         <IconWrapper size={16}>
           <Identicon />

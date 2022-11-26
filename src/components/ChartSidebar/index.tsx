@@ -349,29 +349,9 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
                     border: '.25px solid transparent'
                 }}
             >
-                <SidebarHeader style={{ fontSize: 12, background: color }}>
-                    <div style={{ height: 0, marginBottom: 5, cursor: 'pointer', display: 'flex', justifyContent: "end", position: 'relative', right: '5' }} >
-                        {collapsed && (
-                            <ArrowRightCircle onClick={menuIconClick} />
-                        )}
-
-                        {!collapsed && (
-                            <ArrowLeftCircle onClick={menuIconClick} />
-                        )}
-                    </div>
-                    <Menu iconShape="round">
-
-                        <SubMenu style={{ height: 'fit-content' }} open={search} onOpenChange={setSearch} icon={<Search style={{ background: 'transparent' }} />} title="Search tokens">
-                            <PairSearch onPairSelect={toggleSearchOff} />
-                        </SubMenu>
-
-                    </Menu>
-
-                </SidebarHeader>
                 <SidebarContent style={{ background: color }}>
                     <Menu>
                         <SubMenu
-                            style={{}}
                             open={statsOpen}
                             onOpenChange={onStatsOpenChange}
                             popperarrow
