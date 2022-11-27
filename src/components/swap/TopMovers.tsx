@@ -160,10 +160,6 @@ const _TopTokenMovers = React.memo(() => {
   const allTokenData = useTopPairData()
   const { chainId } = useWeb3React()
   const [allTokens, setAllTokens] = React.useState<any>([])
-  const [ethPrice, ethPriceOld] = useEthPrice()
-  const bnbPrices = useBnbPrices()
-  const [t24, t48, ,] = getDeltaTimestamps()
-  const timestampsFromBlocks = useBlocksFromTimestamps([t24, t48])
   const kibaPair = useKibaPairData()
   const [hasEffectRan, setHasEffectRan] = React.useState(false);
 
@@ -175,39 +171,25 @@ const _TopTokenMovers = React.memo(() => {
 
   const fn = (async (isIntervalled: boolean) => {
     // validate the required parameters are all met before initializing a fetch
-    const { blocks } = timestampsFromBlocks;
     const shouldEffectRun = !hasEffectRan || isIntervalled;
-    if (shouldEffectRun &&
-      blocks &&
-      blocks[0] &&
-      blocks[1]) {
+    if (shouldEffectRun) {
       if (allTokenData &&
         allTokenData.data &&
         kibaPair.data &&
         allTokenData.data.pairs &&
-        kibaPair.data.pairs &&
-        ((chainId === 1 &&
-          ethPrice &&
-          ethPriceOld ||
-          chainId === 56 &&
-          bnbPrices &&
-          bnbPrices?.current &&
-          bnbPrices?.oneDay)
-          ||
-          !chainId)) {
+        kibaPair.data.pairs) {
         setHasEffectRan(true);
-        const chain_string = (chainId === 1 || !chainId) ? 'ethereum' : chainId === 56 ? 'bsc' : 'ethereum'
         const allTokensData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/${[
-            ...kibaPair.data.pairs,
-            ...allTokenData.data.pairs,
-            ...cultureTokens.map((token) => ({
-              token0: {
-                id: token.address
-              }
-            })),
-          ].map((pair: any) => {
-            return pair.token0.id
-          }).join(',')
+          ...kibaPair.data.pairs,
+          ...allTokenData.data.pairs,
+          ...cultureTokens.map((token) => ({
+            token0: {
+              id: token.address
+            }
+          })),
+        ].map((pair: any) => {
+          return pair.token0.id
+        }).join(',')
           }`)
 
         const kibaData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/0x005D1123878Fc55fbd56b54C73963b234a64af3c`)
@@ -224,13 +206,19 @@ const _TopTokenMovers = React.memo(() => {
           (a: any) => a.baseToken.address
         )
         const pair = kibaData.data.pairs[0]
-        setAllTokens([{
+        const transformedKibaPair = {
           ...pair, id: pair.baseToken.address,
           priceChangeUSD: pair.priceChange['h24'],
           symbol: pair.baseToken.symbol,
           name: pair.baseToken.name,
           pairAddress: pair.pairAddress
-        }, ...allTokens]);
+        }
+
+        allTokens.push(transformedKibaPair)
+
+        console.log(`[AllTokens]`, allTokens)
+
+        setAllTokens(allTokens);
       }
     }
   })
@@ -241,13 +229,8 @@ const _TopTokenMovers = React.memo(() => {
     if (kibaPair.loading) return;
     if (!hasEffectRan &&
       !cancelled &&
-      timestampsFromBlocks?.blocks &&
       allTokenData?.data?.pairs &&
-      kibaPair?.data?.pairs &&
-      (((!chainId || chainId === 1) &&
-        ethPriceOld &&
-        ethPrice) ||
-        (chainId === 56 && bnbPrices?.current && bnbPrices?.oneDay))
+      kibaPair?.data?.pairs
     ) {
       fn(false)
     }
@@ -257,11 +240,7 @@ const _TopTokenMovers = React.memo(() => {
     [
       hasEffectRan,
       allTokenData,
-      ethPrice,
-      ethPriceOld,
-      bnbPrices,
       kibaPair,
-      timestampsFromBlocks,
       chainId
     ])
 
@@ -269,27 +248,13 @@ const _TopTokenMovers = React.memo(() => {
     const ourTokens = [
       ...allTokens.filter((a: any) => ["kiba"].includes(a?.symbol?.toLowerCase()) || a?.name?.toLowerCase() === 'kiba inu'),
       ...allTokens.filter((a: any) => ['wci'].includes(a?.symbol?.toLowerCase())), // slot WCI at position #2 because of the partnership
-      ...allTokens.filter((a: any) => cultureTokens.map(a => a?.address?.toLowerCase()).includes(a?.id?.toLowerCase()) || cultureTokens.map(b => b?.name?.toLowerCase()).includes(a?.name?.toLowerCase())),
+      ...allTokens.filter((a: any) => cultureTokens.map(a => a?.address?.toLowerCase()).includes(a?.baseToken?.address?.toLowerCase()) || cultureTokens.map(b => b?.name?.toLowerCase()).includes(a?.name?.toLowerCase())),
     ];
     return _.uniqBy([
       // slot kiba and any paying / partnerships at #1 always
       ...ourTokens,
-      ..._.uniqBy(allTokens, (i: any) => {
-        return i?.id
-      }).sort((a: any, b: any) => {
-        return a && b ?
-          a?.priceChangeUSD && b?.priceChangeUSD ?
-            (Math.abs(a?.priceChangeUSD) > Math.abs(b?.priceChangeUSD) ? -1 : 1) :
-            a.tradeVolumeUSD > b.tradeVolumeUSD ? -1 : 1
-          : -1
-      })
-        .slice(0, 12)
-        .filter((
-          a: {
-            symbol: string;
-            chainId?: number
-          }) => !!a?.symbol && a?.symbol !== 'KIBA' &&
-          (a?.chainId === chainId || !chainId))], a => a.symbol)
+      ...allTokens
+    ], i => i.baseToken.address)
   }, [allTokens, chainId])
 
   const mappedTokens = topPriceIncrease.filter((a: any) => !a?.symbol?.includes('SCAM') && !a?.symbol?.includes('rebass'));
