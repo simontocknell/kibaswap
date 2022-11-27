@@ -197,8 +197,7 @@ const _TopTokenMovers = React.memo(() => {
           !chainId)) {
         setHasEffectRan(true);
         const chain_string = (chainId === 1 || !chainId) ? 'ethereum' : chainId === 56 ? 'bsc' : 'ethereum'
-        const allTokensData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/${
-          [
+        const allTokensData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/${[
             ...kibaPair.data.pairs,
             ...allTokenData.data.pairs,
             ...cultureTokens.map((token) => ({
@@ -209,20 +208,29 @@ const _TopTokenMovers = React.memo(() => {
           ].map((pair: any) => {
             return pair.token0.id
           }).join(',')
-        }`)
+          }`)
+
+        const kibaData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/0x005D1123878Fc55fbd56b54C73963b234a64af3c`)
 
         const allTokens = _.uniqBy(
           allTokensData.data.pairs.map((pair: any) => ({
-          ...pair,
-          id: pair.baseToken.address,
+            ...pair,
+            id: pair.baseToken.address,
+            priceChangeUSD: pair.priceChange['h24'],
+            symbol: pair.baseToken.symbol,
+            name: pair.baseToken.name,
+            pairAddress: pair.pairAddress
+          })),
+          (a: any) => a.baseToken.address
+        )
+        const pair = kibaData.data.pairs[0]
+        setAllTokens([{
+          ...pair, id: pair.baseToken.address,
           priceChangeUSD: pair.priceChange['h24'],
           symbol: pair.baseToken.symbol,
           name: pair.baseToken.name,
           pairAddress: pair.pairAddress
-        })),
-          (a:any) => a.baseToken.address 
-        )
-        setAllTokens(allTokens);
+        }, ...allTokens]);
       }
     }
   })
