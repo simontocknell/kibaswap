@@ -7,11 +7,13 @@ import { fetchBscTokenData, getDeltaTimestamps, useBlocksFromTimestamps, useBnbP
 import { getTokenData, useEthPrice, useKibaPairData, useTopPairData } from 'state/logs/utils'
 
 import { AutoColumn } from 'components/Column'
+import { Currency } from '@uniswap/sdk-core'
 import CurrencyLogo from 'components/CurrencyLogo'
 import HoverInlineText from 'components/HoverInlineText'
 import Marquee from "react-fast-marquee";
 import { RowFixed } from 'components/Row'
 import _ from 'lodash'
+import axios from 'axios'
 import cultureTokens from '../../../src/trending.json'
 import { rgba } from 'polished'
 import styled from 'styled-components/macro'
@@ -87,7 +89,6 @@ export const ScrollableRow = styled.div`
 `
 
 const DataCard = React.memo(({ tokenData, index }: { tokenData: any, index: number }) => {
-  const token = useToken(tokenData?.id?.toLowerCase());
   const { chainId } = useWeb3React()
   const theme = useTheme()
   const darkMode = useIsDarkMode()
@@ -133,7 +134,7 @@ const DataCard = React.memo(({ tokenData, index }: { tokenData: any, index: numb
                   variant={BadgeVariant.POSITIVE_OUTLINE}>
                   {index + 1}
                 </Badge>
-                <CurrencyLogo style={{ marginRight: "2px" }} currency={(chainId === 1 || !chainId) ? token : tokenData} size="20px" />
+                <CurrencyLogo style={{ marginRight: "2px" }} currency={(chainId === 1 || !chainId) ? { address: tokenData.id, symbol: tokenData.symbol, name: tokenData.name, chainId: chainId } as Currency : tokenData} size="20px" />
                 <HoverInlineText text={chainId === 56 ? tokenData?.symbol : tokenData?.symbol?.substring(0, tokenData?.symbol?.length >= 7 ? 7 : tokenData.symbol.length)} />
                 {!!tokenData?.priceChangeUSD && (
                   <>
@@ -165,12 +166,14 @@ const _TopTokenMovers = React.memo(() => {
   const timestampsFromBlocks = useBlocksFromTimestamps([t24, t48])
   const kibaPair = useKibaPairData()
   const [hasEffectRan, setHasEffectRan] = React.useState(false);
+
   React.useEffect(() => {
     //clear out the tokens for refetch on network switch
     setHasEffectRan(false)
     setAllTokens([])
   }, [chainId])
-  const fn = useCallback(async (isIntervalled: boolean) => {
+
+  const fn = (async (isIntervalled: boolean) => {
     // validate the required parameters are all met before initializing a fetch
     const { blocks } = timestampsFromBlocks;
     const shouldEffectRun = !hasEffectRan || isIntervalled;
@@ -193,8 +196,8 @@ const _TopTokenMovers = React.memo(() => {
           ||
           !chainId)) {
         setHasEffectRan(true);
-        const blockOne: number = blocks[0].number, blockTwo: number = blocks[1].number;
-        const allTokens = await Promise.all(
+        const chain_string = (chainId === 1 || !chainId) ? 'ethereum' : chainId === 56 ? 'bsc' : 'ethereum'
+        const allTokensData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/${
           [
             ...kibaPair.data.pairs,
             ...allTokenData.data.pairs,
@@ -203,22 +206,28 @@ const _TopTokenMovers = React.memo(() => {
                 id: token.address
               }
             })),
-          ].map(async (pair: any) => {
-            const value = (!chainId || chainId === 1) ? await getTokenData(pair.token0.id, ethPrice, ethPriceOld, blockOne, blockTwo) as any : await fetchBscTokenData(pair.token0.id, bnbPrices?.current, bnbPrices?.oneDay, blockOne, blockTwo)
-            if (value) {
-              value.chainId = chainId ? chainId : 1;
-              value.pairAddress = pair.id;
-            }
-            return value;
-          })
-        );
+          ].map((pair: any) => {
+            return pair.token0.id
+          }).join(',')
+        }`)
+
+        const allTokens = _.uniqBy(
+          allTokensData.data.pairs.map((pair: any) => ({
+          ...pair,
+          id: pair.baseToken.address,
+          priceChangeUSD: pair.priceChange['h24'],
+          symbol: pair.baseToken.symbol,
+          name: pair.baseToken.name,
+          pairAddress: pair.pairAddress
+        })),
+          (a:any) => a.baseToken.address 
+        )
         setAllTokens(allTokens);
       }
     }
-  }, [timestampsFromBlocks, ethPrice, ethPriceOld, bnbPrices, hasEffectRan, chainId, kibaPair, allTokens, allTokenData])
+  })
 
   let cancelled = false;
-
   React.useEffect(() => {
     if (allTokenData.loading) return;
     if (kibaPair.loading) return;
