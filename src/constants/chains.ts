@@ -77,7 +77,7 @@ export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
  * These are the network URLs used by the interface when there is not another available source of chain data
  */
 export const INFURA_NETWORK_URLS: { [key in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: `https://eth-mainnet.public.blastapi.io`,
+  [SupportedChainId.MAINNET]: `https://rpc.ankr.com/eth`,
   [SupportedChainId.RINKEBY]: `https://rinkeby-light.eth.linkpool.io`,
   [SupportedChainId.ROPSTEN]: `https://ropsten-light.eth.linkpool.io`,
   [SupportedChainId.GOERLI]: `https://goerli-light.eth.linkpool.io`,
