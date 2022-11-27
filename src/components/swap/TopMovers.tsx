@@ -192,8 +192,12 @@ const _TopTokenMovers = React.memo(() => {
         }).join(',')
           }`)
 
-        const kibaData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/0x005D1123878Fc55fbd56b54C73963b234a64af3c`)
+        let kibaAddress = '0x005D1123878Fc55fbd56b54C73963b234a64af3c'
+        if (chainId&&chainId===56) {
+          kibaAddress = '0xC3afDe95B6Eb9ba8553cDAea6645D45fB3a7FAF5'
+        }
 
+        const kibaData = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/` + kibaAddress)
         const allTokens = _.uniqBy(
           allTokensData.data.pairs.map((pair: any) => ({
             ...pair,
