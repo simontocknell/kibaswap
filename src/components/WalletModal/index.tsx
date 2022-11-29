@@ -147,6 +147,8 @@ export default function WalletModal({
   const toggleWalletModal = useWalletModalToggle()
   const previousAccount = usePrevious(account)
   const ref = useRef<HTMLDivElement>(null)
+  useOnClickOutside(ref, walletModalOpen ? toggleWalletModal : undefined)
+
 
 
 
@@ -367,7 +369,7 @@ return (
   <Box position="relative" ref={ref} >
 
     {walletModalOpen && (
-  <WalletDropdown top={{ sm: '0', lg: '28' }} bottom={{ sm: 'unset', lg: 'unset' }} right="0">   
+  <WalletDropdown top={{ sm: '28', lg: '28' }} bottom={{ sm: 'unset', lg: 'unset' }} right="0">   
   <ContentWrapper>{getModalContent()}</ContentWrapper>
   </WalletDropdown>
     )}
