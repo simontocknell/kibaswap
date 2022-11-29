@@ -125,7 +125,7 @@ function KibaColors(darkMode: boolean): Colors {
 
     // text
     text1: darkMode ? '#fff' : '#0e121c',
-    text2: darkMode ? '#fff' : '#565A69',
+    text2: darkMode ? 'rgba(255,255,255, 0.8)' : '#565A69',
     text3: darkMode ? '#fff' : '#6E727D',
     text4: darkMode ? '#fff' : '#18181E',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',

@@ -74,6 +74,28 @@ const PrimaryMenuRowText = ({ children }: { children: ReactNode }) => {
 
 PrimaryMenuRow.Text = PrimaryMenuRowText
 
+const ModalMenuItem = styled.button`
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  padding: 0rem 0rem;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.text1};
+  :hover {
+    color: ${({ theme }) => theme.text2};
+    transition: ease all 0.2s ;
+    cursor: pointer;
+    text-decoration: none;
+  }
+`
+
 
 const ChevronWrapper = styled.button`
   background-color: transparent;
@@ -82,8 +104,7 @@ const ChevronWrapper = styled.button`
   display: flex;
   padding: 0px 0px 0px 0px;
 
-  :hover {
-    
+  :hover {  
   }
   :hover,
   :active,
@@ -137,11 +158,7 @@ const Icon = ({ href, children }: { href?: string; children: ReactNode }) => {
 
 export const ToolsDropdown = () => {
   const [isOpen, toggleOpen] = useReducer((s) => !s, false)
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
-  const [menu, setMenu] = useState<'main' | 'lang'>('main')
   const isMobile = useIsMobileSp()
-
-
   const theme = useContext(ThemeContext)
   const ref = useRef<HTMLDivElement>(null)
   useOnClickOutside(ref, isOpen ? toggleOpen : undefined)
@@ -175,33 +192,33 @@ export const ToolsDropdown = () => {
                   <Icon>
                   <Star opacity={0.6} size={16} />
                   </Icon>
-                  <PrimaryMenuRow.Text>
+                  <ModalMenuItem>
                     <Trans>KibaFomo</Trans>
-                  </PrimaryMenuRow.Text>
+                  </ModalMenuItem>
                 </PrimaryMenuRow>
                 <PrimaryMenuRow to="/honeypot-checker" close={toggleOpen}>
                   <Icon>
                   <Code opacity={0.6} size={16} />
                   </Icon>
-                  <PrimaryMenuRow.Text>
-                    <Trans>Honeypot Checker</Trans>
-                  </PrimaryMenuRow.Text>
+                  <ModalMenuItem>
+                    Honeypot Checker
+                  </ModalMenuItem>
                 </PrimaryMenuRow>
                 <PrimaryMenuRow to="/suite" close={toggleOpen}>
                   <Icon>
                   <Tool size={16} opacity={0.6} />
                   </Icon>
-                  <PrimaryMenuRow.Text>
+                  <ModalMenuItem>
                     <Trans>KibaTools</Trans>
-                  </PrimaryMenuRow.Text>
+                  </ModalMenuItem>
                 </PrimaryMenuRow>
                 <PrimaryMenuRow to="/details" close={toggleOpen}>
                   <Icon>
                   <List size={16} opacity={0.6} />
                   </Icon>
-                  <PrimaryMenuRow.Text>
+                  <ModalMenuItem>
                     <Trans>Transactions</Trans>
-                  </PrimaryMenuRow.Text>
+                  </ModalMenuItem>
                 </PrimaryMenuRow>
               </Column>
               

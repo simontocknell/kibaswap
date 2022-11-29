@@ -6,6 +6,7 @@ import React from 'react'
 import { transparentize } from 'polished'
 import { useGesture } from 'react-use-gesture'
 import { useIsMobile } from 'pages/Swap/SelectiveCharting'
+import { useIsMobileSp } from 'components/AndyComponents/AndyHooks'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -98,7 +99,7 @@ export default function Modal({
   size = 850,
   children,
 }: ModalProps) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobileSp()
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
     from: { opacity: 0 },

@@ -23,9 +23,11 @@ import { darken } from 'polished'
 import { shortenAddress } from '../../utils'
 import useENSName from '../../hooks/useENSName'
 import { useHasSocks } from '../../hooks/useSocksBalance'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import useTheme from 'hooks/useTheme'
 import { useWalletModalToggle } from '../../state/application/hooks'
+import { Box } from 'components/AndyComponents/Box'
+import { useOnClickOutside } from 'usehooks-ts'
 
 const IconWrapper = styled.div<{ size?: number }>`
   ${({ theme }) => theme.flexColumnNoWrap};
