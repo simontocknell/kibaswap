@@ -27,6 +27,8 @@ export const mobileNavDropdownTop = style([
   baseNavDropdown,
   sprinkles({
     position: 'fixed',
+    borderBottomRightRadius: '12',
+    borderBottomLeftRadius: '12',
     left: '0',
     right: '0',
     width: 'full',

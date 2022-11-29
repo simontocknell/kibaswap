@@ -369,7 +369,7 @@ return (
   <Box position="relative" ref={ref} >
 
     {walletModalOpen && (
-  <WalletDropdown top={{ sm: '28', lg: '28' }} bottom={{ sm: 'unset', lg: 'unset' }} right="0">   
+  <WalletDropdown top={{ sm: '56', lg: '28' }} bottom={{ sm: 'unset', lg: 'unset' }} right="0">   
   <ContentWrapper>{getModalContent()}</ContentWrapper>
   </WalletDropdown>
     )}
