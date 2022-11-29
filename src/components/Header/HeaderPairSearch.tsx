@@ -313,7 +313,7 @@ user-select: none;
           borderBottomWidth={isOpen || isMobileOrTablet ? '0px' : '1px'}
           onClick={() => !isOpen && toggleOpen()}
           gap="12"
-          marginTop="4"
+          marginTop="0"
         >
           <Box className={showCenteredSearchContent ? styles.searchContentCentered : styles.searchContentLeftAlign}>
             <Box display={{ sm: 'none', md: 'flex' }} color="textSecondary">

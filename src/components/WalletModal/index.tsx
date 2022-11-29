@@ -1,9 +1,12 @@
+import * as styles from './WalletDropdown.css'
+
+
+
 import { ExternalLink, TYPE } from '../../theme'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { fortmatic, injected, portis } from '../../connectors'
-import { useEffect, useState } from 'react'
+import { ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useReducer, useRef, useState } from 'react'
 import { useModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import AccountDetails from '../AccountDetails'
 import { ApplicationModal } from '../../state/application/actions'
@@ -21,9 +24,16 @@ import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import { Trans } from '@lingui/macro'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { flex } from 'styled-system'
-import { isMobile } from 'react-device-detect'
-import styled from 'styled-components/macro'
+import styled, { css, ThemeContext } from 'styled-components/macro'
 import usePrevious from '../../hooks/usePrevious'
+import { Box, BoxProps } from 'components/AndyComponents/Box'
+import { NavLink, NavLinkProps } from 'react-router-dom'
+import { Column, FlRow } from 'components/AndyComponents/Flex'
+import { body } from 'components/AndyComponents/common.css'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { useIsMobileSp } from 'components/AndyComponents/AndyHooks'
+import { isMobile } from 'react-device-detect'
+
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -42,13 +52,7 @@ color:${props => props.theme.text1};
   }
 `
 
-const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background: ${props => props.theme.bg0};
-`
+
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -62,24 +66,19 @@ const HeaderRow = styled.div`
   `};
 `
 
-const InternalHeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 5px;
-  font-weight: 600;
-  font-family: 'Open Sans';
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
+const WalletDropdown = forwardRef((props: BoxProps, ref: ForwardedRef<HTMLElement>) => {
+  const isMobileW = useIsMobileSp()
+  return <Box ref={ref} className={isMobileW ? styles.mobileNavDropdownTop : styles.NavDropdown} {...props} />
+})
+
+WalletDropdown.displayName = 'WalletDropdown'
 
 
 const ContentWrapper = styled.div`
-  background: ${({ theme }) => theme.bg0};
-  padding: 30px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0 1rem 1rem 1rem`};
+  background: transparent;
+  padding: 10px;
+
 `
 
 const UpperSection = styled.div`
@@ -103,25 +102,24 @@ const UpperSection = styled.div`
 `
 
 const OptionGrid = styled.div`
-  padding: 20px 0px 0px 0px;
   display: grid;
   grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
 `
+export enum FlyoutAlignment {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
-const HoverText = styled.div`
-  text-decoration: none;
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  align-items: center;
 
-  :hover {
-    cursor: pointer;
-  }
-`
+
+
+
+
+
+
+
+
+
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -141,18 +139,16 @@ export default function WalletModal({
 }) {
   // important that these are destructed from the account-specific web3-react context
   const { active, account, connector, activate, error } = useWeb3React()
-
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const previousWalletView = usePrevious(walletView)
-
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-
   const [pendingError, setPendingError] = useState<boolean>()
-
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
   const toggleWalletModal = useWalletModalToggle()
-
   const previousAccount = usePrevious(account)
+  const ref = useRef<HTMLDivElement>(null)
+
+
 
 
   // close on connection, when logged out before
@@ -341,63 +337,13 @@ export default function WalletModal({
       )
     }
     return (
-      <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
-          <CloseColor />
-        </CloseIcon>
-        {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow>
-            <HoverText
-              onClick={() => {
-                setPendingError(false)
-                setWalletView(WALLET_VIEWS.ACCOUNT)
-              }}
-            >
-              <Trans>Back</Trans>
-            </HoverText>
-          </HeaderRow>
-        ) : (
-          <HeaderRow style={{ fontFamily: 'Open Sans', fontSize: 24, letterSpacing: 2 }}>
-
-            <Trans>Connect to a wallet</Trans>
-
-          </HeaderRow>
-        )}
+      
+      
+        
 
         <ContentWrapper>
-          <LightCard style={{ marginBottom: '12px', fontFamily: 'Open Sans' }}>
-            <InternalHeaderRow style={{ justifyContent: 'center', fontFamily: 'Open Sans', fontSize: 14, letterSpacing: 1 }}>
-              <Trans>Switching networks &nbsp; <QuestionHelper size={18} text={" To use BSC select Smart Chain prior to connecting. If your wallet lets you change network on the fly (MetaMask does) then you can change at any time. If your wallet does not then disconnect and reconnect to switch networks."} /></Trans>
-            </InternalHeaderRow>
-            <AutoRow style={{ justifyContent: 'center', alignItems: 'center', flexWrap: 'nowrap' }}>
-              <TYPE.main textAlign="center" style={{ display: 'flex' }} fontSize={14}>
-                <Trans>
-                  <div style={{ width: '100%', justifyContent: 'center', flexFlow: 'row', display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div>
-                      The Network you are using is controlled by your wallet.
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexFlow: 'row wrap' }}>
-
-                      <ExternalLink href="https://kibainu.org/networkhelp/">Click here for help.</ExternalLink>
-                    </div>
-                  </div>
-                </Trans>
-              </TYPE.main>
-            </AutoRow>
-          </LightCard>
-          <LightCard style={{ marginBottom: '12px', fontFamily: 'Open Sans', lineHeight: '22px', borderColor: '#18181E' }}>
-            <AutoRow style={{ flexWrap: 'nowrap' }}>
-              <TYPE.main fontSize={14}>
-                <Trans>
-                  By connecting a wallet, you agree to Uniswap Labs’ {' '}
-                  <ExternalLink href="https://uniswap.org/terms-of-service/">Terms of Service</ExternalLink> and
-                  acknowledge that you have read and understand the {' '}
-                  <ExternalLink href="https://uniswap.org/disclaimer/">Uniswap protocol disclaimer.</ExternalLink>
-                  <small style={{ fontSize: 14 }}>&nbsp;In addition, you are agreeing to using any Custom Contract implementations that may have been or will be put in place to enhance the performance of KibaSwap.</small>
-                </Trans>
-              </TYPE.main>
-            </AutoRow>
-          </LightCard>
+          
+          
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView
               connector={pendingWallet}
@@ -409,13 +355,23 @@ export default function WalletModal({
             <OptionGrid>{getOptions()}</OptionGrid>
           )}
         </ContentWrapper>
-      </UpperSection>
+
     )
   }
 
-  return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
-      <Wrapper>{getModalContent()}</Wrapper>
-    </Modal>
-  )
+
+
+
+return (
+  
+  <Box position="relative" ref={ref} >
+
+    {walletModalOpen && (
+  <WalletDropdown top={{ sm: '0', lg: '28' }} bottom={{ sm: 'unset', lg: 'unset' }} right="0">   
+  <ContentWrapper>{getModalContent()}</ContentWrapper>
+  </WalletDropdown>
+    )}
+  </Box>
+)
 }
+

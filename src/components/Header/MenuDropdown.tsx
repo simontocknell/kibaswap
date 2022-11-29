@@ -80,9 +80,9 @@ const ToggleMenuItem = styled.button`
   justify-content: space-between;
   font-size: 1rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text1};
   :hover {
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text2};
     cursor: pointer;
     text-decoration: none;
   }
@@ -271,9 +271,9 @@ export const MenuDropdown= () => {
                       <Icon>
                       <Star opacity={0.6} size={16} />
                       </Icon>
-                      <PrimaryMenuRow.Text>
+                      <ToggleMenuItem>
                         <Trans>Documentation</Trans>
-                      </PrimaryMenuRow.Text>
+                      </ToggleMenuItem>
                     </PrimaryMenuRow>
                     <Box>
                   <ToggleMenuItem onClick={() => toggleDarkMode()}>

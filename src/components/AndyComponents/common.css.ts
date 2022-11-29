@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css'
-
+import { BodyWrapper } from 'pages/AppBody'
 import { sprinkles, themeVars, vars } from 'theme/spinkles.css'
 
 export const center = sprinkles({
@@ -113,6 +113,25 @@ export const imageHover = style({
 })
 
 export const magicalGradient = style({
+  selectors: {
+    '&::before': {
+      content: '',
+      position: 'absolute',
+      inset: 0,
+      background: 'linear-gradient(91.46deg, #ED2224 0%, #E4C520 100.13%) border-box',
+      borderColor: 'transparent',
+      WebkitMask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);',
+      WebkitMaskComposite: 'xor;',
+      maskComposite: 'exclude',
+      borderStyle: 'solid',
+      borderWidth: '1px',
+      borderRadius: 'inherit',
+      pointerEvents: 'none',
+    },
+  },
+})
+
+export const magicalWrapper = style({
   selectors: {
     '&::before': {
       content: '',
