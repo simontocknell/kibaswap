@@ -70,13 +70,24 @@ export const AccountPage = () => {
     const hasAccess = useHasAccess()
     React.useEffect(() => {
         if (transactions && transactions?.data && transactions?.data?.swaps && library?.provider) {
-            Promise.all(transactions?.data?.swaps?.map(async (item: any) => {
+            Promise.all((transactions?.data?.swaps || [])?.map(async (item: any) => {
                 if (item) {
-                const tx = await web3.eth.getTransaction(item?.transaction?.id);
-                const txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id)
+                let tx = await web3.eth.getTransaction(item?.transaction?.id).catch(e => {
+                    console.error(`[web3.getTransaction]`, e)
+
+                    tx = {
+                        gasPrice: '0'
+                    } as any
+                });
+                let txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id).catch((e) => {
+                    console.error(`[web3.getTransactionReceipt]`, e)
+                    txReceipt = {
+                        gasUsed: 0
+                    } as any
+                })
                 const payload = {
                     ...item,
-                    cost: (parseFloat(tx?.gasPrice) * txReceipt?.gasUsed) / 10 ** 18,
+                    cost: (parseFloat(tx?.gasPrice as string) * (txReceipt || {gasUsed: 0})?.gasUsed) / 10 ** 18,
                     gasUsed: txReceipt?.gasUsed,
                     gasPrice: tx?.gasPrice
                 }
@@ -118,7 +129,7 @@ export const AccountPage = () => {
                 {hasAccess && (
                     <>
                         <Transactions loading={transactions.loading} error={transactions.error} transactions={formattedTxns} />
-                        <TotalRow totalGasETH={totalGasUsed} totalGasUSD={totalGasUSD} account={account} txCount={txCount} transactions={transactions?.data?.swaps} />
+                        <TotalRow totalGasETH={totalGasUsed} totalGasUSD={totalGasUSD} account={account} txCount={txCount} transactions={transactions?.data?.swaps ?? []} />
                     </>
                 )}
                 {!hasAccess && <p style={{ color:theme.text1, height: 400, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center' }}>You must own Kiba Inu tokens to use this feature.</p>}
@@ -143,11 +154,22 @@ export const AccountPageWithAccount = () => {
         if (transactions && transactions?.data && transactions?.data?.swaps && library?.provider) {
             Promise.all(transactions?.data?.swaps?.map(async (item: any) => {
                 if (item) {
-                const tx = await web3.eth.getTransaction(item?.transaction?.id);
-                const txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id)
+                    let tx = await web3.eth.getTransaction(item?.transaction?.id).catch(e => {
+                        console.error(`[web3.getTransaction]`, e)
+    
+                        tx = {
+                            gasPrice: '0'
+                        } as any
+                    });
+                    let txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id).catch((e) => {
+                        console.error(`[web3.getTransactionReceipt]`, e)
+                        txReceipt = {
+                            gasUsed: 0
+                        } as any
+                    })
                 const payload = {
                     ...item,
-                    cost: (parseFloat(tx?.gasPrice) * txReceipt?.gasUsed) / 10 ** 18,
+                    cost: (parseFloat(tx?.gasPrice as string) * (txReceipt || {gasUsed: 0})?.gasUsed) / 10 ** 18,
                     gasUsed: txReceipt?.gasUsed,
                     gasPrice: tx?.gasPrice
                 }

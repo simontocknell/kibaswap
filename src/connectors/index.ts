@@ -21,7 +21,7 @@ if (typeof INFURA_KEY === 'undefined') {
 }
 
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: `https://rpc.ankr.com/eth`,
+  [SupportedChainId.MAINNET]: `https://cloudflare-eth.com`,
   [SupportedChainId.RINKEBY]: `https://rinkeby-light.eth.linkpool.io`,
   [SupportedChainId.ROPSTEN]: `https://ropsten-light.eth.linkpool.io`,
   [SupportedChainId.GOERLI]: `https://goerli-light.eth.linkpool.io`,

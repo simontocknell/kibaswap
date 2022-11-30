@@ -1503,8 +1503,8 @@ export const useUserTransactions = (account?: string | null) => {
         pollInterval: 60000
     })
     if (chainId !== 1)
-
         query.stopPolling()
+
     if (chainId !== 56)
         bscQuery.stopPolling();
 
@@ -1532,16 +1532,18 @@ export const useUserTransactions = (account?: string | null) => {
             };
         } else if (chainId === 56) {
 
+            const retObj = { }
             const retval = []
             if (sells?.data?.swaps) {
                 retval.push(...sells?.data?.swaps)
             }
             if (bscData?.swaps) {
-                retval.push(...bscData.swaps)
+                retval.push(...bscData?.swaps ?? [])
             }
             const uniqueSwaps = _.uniqBy(retval, swap => swap?.transaction?.id);
-            bscData.swaps = _.orderBy(uniqueSwaps, swap => new Date(+swap.transaction.timestamp * 1000), 'desc');
-            return bscData;
+            return {
+              swaps: _.orderBy(uniqueSwaps, swap => new Date(+swap.transaction.timestamp * 1000), 'desc')
+            }
         }
     }, [sells?.data, data, bscData, chainId])
 

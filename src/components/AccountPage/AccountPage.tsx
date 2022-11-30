@@ -34,15 +34,15 @@ const TotalRow = ({ totalGasUSD, totalGasETH, account, transactions, txCount }: 
         <div style={{ paddingTop: 10, display: 'flex', gap: 10, flexFlow: 'row wrap', alignItems: 'center', justifyContent: 'stretch' }}>
             <div style={{ marginBottom: 5, justifyContent: 'start', flexFlow: 'column wrap', alignItems: 'center' }}>
                 <StyledHeader># Swaps</StyledHeader>
-                <Badge style={{ display:'flex', margin: 0, textAlign: 'right' }}>{Number(transactions?.length?.toFixed(2)).toLocaleString()}</Badge>
+                <Badge style={{ display: 'flex', margin: 0, textAlign: 'right' }}>{Number(transactions?.length?.toFixed(2)).toLocaleString()}</Badge>
             </div>
             {totalGasUSD && totalGasUSD?.greaterThan(0) && <div style={{ marginBottom: 5, flexFlow: 'column wrap', alignItems: 'center' }}>
                 <StyledHeader>Gas Swapped</StyledHeader>
-                {totalGasETH && <Badge style={{ display:'flex', margin: 0, textAlign: 'right' }}>{Number(totalGasETH).toLocaleString()} ETH {totalGasUSD && <>(${(totalGasUSD).toFixed(2)} USD)</>} </Badge>}
+                {totalGasETH && <Badge style={{ display: 'flex', margin: 0, textAlign: 'right' }}>{Number(totalGasETH).toLocaleString()} ETH {totalGasUSD && <>(${(totalGasUSD).toFixed(2)} USD)</>} </Badge>}
             </div>}
             <div style={{ marginBottom: 5, justifyContent: 'start', flexFlow: 'column wrap', alignItems: 'center' }}>
                 <StyledHeader>USD Swapped</StyledHeader>
-                <Badge style={{display:'flex', margin: 0, textAlign: 'right' }}>${Number(total.toFixed(2)).toLocaleString()}</Badge>
+                <Badge style={{ display: 'flex', margin: 0, textAlign: 'right' }}>${Number(total.toFixed(2)).toLocaleString()}</Badge>
             </div>
         </div>
     )
@@ -67,21 +67,25 @@ export const AccountPage = () => {
     const [formattedTxns, setFormattedTxns] = React.useState<any[]>()
     const web3 = new Web3(library?.provider)
     const hasAccess = useHasAccess()
-    const theme=useTheme()
+    const theme = useTheme()
     React.useEffect(() => {
         if (transactions && transactions?.data && transactions?.data?.swaps && library?.provider) {
             Promise.all(transactions?.data?.swaps?.map(async (item: any) => {
-                if (item) {
-                const tx = await web3.eth.getTransaction(item?.transaction?.id);
-                const txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id)
-                const payload = {
-                    ...item,
-                    cost: (parseFloat(tx?.gasPrice) * txReceipt?.gasUsed) / 10 ** 18,
-                    gasUsed: txReceipt?.gasUsed,
-                    gasPrice: tx?.gasPrice
+                try {
+                    if (item) {
+                        const tx = await web3.eth.getTransaction(item?.transaction?.id);
+                        const txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id)
+                        const payload = {
+                            ...item,
+                            cost: (parseFloat(tx?.gasPrice) * txReceipt?.gasUsed) / 10 ** 18,
+                            gasUsed: txReceipt?.gasUsed,
+                            gasPrice: tx?.gasPrice
+                        }
+                        return payload
+                    } else return {}
+                } catch (exception) {
+                    console.error(`[AccountPage.useEffect]`, exception)
                 }
-                return payload
-            } else return {}
             })).then(setFormattedTxns)
         }
     }, [transactions.data, library])
@@ -105,9 +109,9 @@ export const AccountPage = () => {
     if (!account) return null;
 
     return (
-        <DarkCard style={{ maxWidth: 850,color: theme.text1,  padding: 20 }}>
+        <DarkCard style={{ maxWidth: 850, color: theme.text1, padding: 20 }}>
             <div style={{ display: 'flex', flexFlow: 'row wrap', marginBottom: 10, justifyContent: 'space-between' }}>
-                <StyledHeader style= {{color: theme.text1, fontSize:14, paddingTop: 20, paddingBottom: 20 }}>Transaction History</StyledHeader>
+                <StyledHeader style={{ color: theme.text1, fontSize: 14, paddingTop: 20, paddingBottom: 20 }}>Transaction History</StyledHeader>
                 {hasAccess && <ExternalLink href={`https://etherscan.io/address/${account}`}>
                     <ButtonGray> View on explorer
                         <ExternalLinkIcon href={`https://etherscan.io/address/${account}`} />
@@ -130,30 +134,34 @@ export const AccountPage = () => {
 
 
 export const AccountPageWithAccount = () => {
-    const params = useParams<{account: string}>()
-    const {account} = params;
-    const {  library, chainId } = useWeb3React()
+    const params = useParams<{ account: string }>()
+    const { account } = params;
+    const { library, chainId } = useWeb3React()
     const transactions = useUserTransactions(account)
     const [formattedTxns, setFormattedTxns] = React.useState<any[]>()
     const web3 = new Web3(library?.provider)
     const hasAccess = useHasAccess()
-    const theme =useTheme()
+    const theme = useTheme()
     const ethBalance = useETHBalances([account?.toLowerCase()])
     console.log(ethBalance)
     React.useEffect(() => {
         if (transactions && transactions?.data && transactions?.data?.swaps && library?.provider) {
             Promise.all(transactions?.data?.swaps?.map(async (item: any) => {
-                if (item) {
-                const tx = await web3.eth.getTransaction(item?.transaction?.id);
-                const txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id)
-                const payload = {
-                    ...item,
-                    cost: (parseFloat(tx?.gasPrice) * txReceipt?.gasUsed) / 10 ** 18,
-                    gasUsed: txReceipt?.gasUsed,
-                    gasPrice: tx?.gasPrice
+                try {
+                    if (item) {
+                        const tx = await web3.eth.getTransaction(item?.transaction?.id);
+                        const txReceipt = await web3.eth.getTransactionReceipt(item?.transaction?.id)
+                        const payload = {
+                            ...item,
+                            cost: (parseFloat(tx?.gasPrice) * txReceipt?.gasUsed) / 10 ** 18,
+                            gasUsed: txReceipt?.gasUsed,
+                            gasPrice: tx?.gasPrice
+                        }
+                        return payload
+                    } else return {}
+                } catch (exception) {
+                    console.error(`[AccountPage.useEffect]`, exception)
                 }
-                return payload
-            } else return {}
             })).then(setFormattedTxns)
         }
     }, [transactions.data, library])
@@ -178,8 +186,8 @@ export const AccountPageWithAccount = () => {
 
     return (
         <DarkCard style={{ maxWidth: 850, background: '#252632' }}>
-            <div style={{ display: 'flex', flexFlow: 'row wrap', marginBottom: 10, justifyContent: 'space-between',rowGap: 10, columnGap: 15 }}>
-                <Badge><StyledHeader style={{color: theme.text1}}>Transaction History </StyledHeader></Badge>
+            <div style={{ display: 'flex', flexFlow: 'row wrap', marginBottom: 10, justifyContent: 'space-between', rowGap: 10, columnGap: 15 }}>
+                <Badge><StyledHeader style={{ color: theme.text1 }}>Transaction History </StyledHeader></Badge>
                 {hasAccess && <ExternalLink href={`https://etherscan.io/address/${account}`}>
                     <ButtonPrimary> View on explorer
                         <ExternalLinkIcon href={`https://etherscan.io/address/${account}`} />
