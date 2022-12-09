@@ -29,6 +29,7 @@ import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
 import AppBody from '../AppBody'
 import { AutoColumn } from '../../components/Column'
 import BetterTradeLink from '../../components/swap/BetterTradeLink'
+import { Bridge } from 'components/AccountDetails/Bridge'
 import { ChartModal } from 'components/swap/ChartModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import CurrencyLogo from '../../components/CurrencyLogo'
@@ -45,6 +46,7 @@ import React from 'react'
 import ReactGA from 'react-ga'
 import Swal from 'sweetalert2'
 import SwapHeader from '../../components/swap/SwapHeader'
+import SwapSubHeader from 'components/swap/SwapSubHeader'
 import { SwitchLocaleLink } from '../../components/SwitchLocaleLink'
 import { Text } from 'rebass'
 import TokenWarningModal from '../../components/TokenWarningModal'
@@ -72,9 +74,6 @@ import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useUSDCValueV2AndV3 } from '../../hooks/useUSDCPrice'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { warningSeverity } from '../../utils/prices'
-import { Bridge } from 'components/AccountDetails/Bridge'
-import SwapSubHeader from 'components/swap/SwapSubHeader'
-
 
 // In addition to the navigator object, we also have a clipboard
 //   property.
@@ -744,7 +743,6 @@ export default function Swap({ history }: RouteComponentProps) {
                     fiatValue={fiatValueInput ?? undefined}
                     onCurrencySelect={handleInputSelect}
                     otherCurrency={currencies[Field.OUTPUT]}
-                    showOnlyTrumpCoins={true}
                     showCommonBases={true}
                     hideBalance={false}
                     hideInput={false}
@@ -762,11 +760,17 @@ export default function Swap({ history }: RouteComponentProps) {
                   <CurrencyInputPanel
                     value={formattedAmounts[Field.OUTPUT]}
                     onUserInput={handleTypeOutput}
-                    label={independentField === Field.INPUT && !showWrap ? <Trans><> To (at least)  </></Trans> : <Trans> <>To </></Trans>}
+                    label={
+                      independentField === Field.INPUT && !showWrap ? 
+                        <Trans>
+                          <> To (at least)  </>
+                        </Trans> : 
+                        <Trans> 
+                          <>To </>
+                        </Trans>
+                    }
                     showMaxButton={false}
                     hideBalance={false}
-
-                    showOnlyTrumpCoins={true}
                     fiatValue={fiatValueOutput ?? undefined}
                     priceImpact={priceImpact}
                     currency={currencies[Field.OUTPUT]}
