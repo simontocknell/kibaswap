@@ -79,7 +79,7 @@ const {  isOpen,
       } else {
         console.log(`importtoken`, importToken , token)
         if (importToken || token) {
-          const theToken = (importToken || token) as Token
+          const theToken = (token ?? importToken) as Token
           addToken(theToken)
           handleCurrencySelect && handleCurrencySelect(theToken)
           onDismiss()
