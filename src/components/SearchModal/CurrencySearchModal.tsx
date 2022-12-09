@@ -1,5 +1,6 @@
 import { Currency, Token } from '@uniswap/sdk-core'
 import React, { useCallback, useEffect, useState } from 'react'
+import { useAddUserToken, useIsExpertMode } from 'state/user/hooks'
 
 import { CurrencySearch } from './CurrencySearch'
 import { ImportList } from './ImportList'
@@ -70,7 +71,21 @@ const {  isOpen,
   // change min height if not searching
   const minHeight = modalView === CurrencyModalView.importToken || modalView === CurrencyModalView.importList ? 40 : 80
     const showManageView = () => setModalView(CurrencyModalView.manage)
-    const showImportView = () => setModalView(CurrencyModalView.importToken)
+    const expertMode = useIsExpertMode()
+    const addToken = useAddUserToken()
+    const showImportView =  (token?: Token) => {
+      if (!expertMode) {
+      setModalView(CurrencyModalView.importToken)
+      } else {
+        console.log(`importtoken`, importToken , token)
+        if (importToken || token) {
+          const theToken = (importToken || token) as Token
+          addToken(theToken)
+          handleCurrencySelect && handleCurrencySelect(theToken)
+          onDismiss()
+        }
+      }
+    }
     const onBackImportTokenFn =() =>
     setModalView(prevView && prevView !== CurrencyModalView.importToken ? prevView : CurrencyModalView.search)
   

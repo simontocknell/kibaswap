@@ -60,7 +60,7 @@ interface CurrencySearchProps {
   disableNonToken?: boolean
   showOnlyTrumpCoins?: boolean;
   showManageView: () => void
-  showImportView: () => void
+  showImportView: (token?: Token) => void
   setImportToken: (token: Token) => void
 }
 

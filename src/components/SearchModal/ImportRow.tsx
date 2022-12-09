@@ -1,17 +1,18 @@
-import { CSSProperties } from 'react'
-import { Token } from '@uniswap/sdk-core'
 import { AutoRow, RowFixed } from 'components/Row'
+import { useIsTokenActive, useIsUserAddedToken } from 'hooks/Tokens'
+
 import { AutoColumn } from 'components/Column'
-import CurrencyLogo from 'components/CurrencyLogo'
-import { TYPE } from 'theme'
-import ListLogo from 'components/ListLogo'
-import useTheme from 'hooks/useTheme'
 import { ButtonPrimary } from 'components/Button'
-import styled from 'styled-components/macro'
-import { useIsUserAddedToken, useIsTokenActive } from 'hooks/Tokens'
+import { CSSProperties } from 'react'
 import { CheckCircle } from 'react-feather'
-import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
+import CurrencyLogo from 'components/CurrencyLogo'
+import ListLogo from 'components/ListLogo'
+import { TYPE } from 'theme'
+import { Token } from '@uniswap/sdk-core'
 import { Trans } from '@lingui/macro'
+import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
+import styled from 'styled-components/macro'
+import useTheme from 'hooks/useTheme'
 
 const TokenSection = styled.div<{ dim?: boolean }>`
   padding: 4px 20px;
@@ -50,7 +51,7 @@ export default function ImportRow({
   token: Token
   style?: CSSProperties
   dim?: boolean
-  showImportView: () => void
+  showImportView: (token?: Token) => void
   setImportToken: (token: Token) => void
 }) {
   const theme = useTheme()
@@ -60,7 +61,10 @@ export default function ImportRow({
   const isActive = useIsTokenActive(token)
 
   const list = token instanceof WrappedTokenInfo ? token.list : undefined
-
+  const importtokenClick = () => {
+    setImportToken(token)
+    showImportView(token)
+  }
   return (
     <TokenSection style={style}>
       <CurrencyLogo currency={token} size={'24px'} style={{ opacity: dim ? '0.6' : '1' }} />
@@ -86,10 +90,7 @@ export default function ImportRow({
           padding="6px 12px"
           fontWeight={500}
           fontSize="14px"
-          onClick={() => {
-            setImportToken && setImportToken(token)
-            showImportView()
-          }}
+          onClick={importtokenClick}
         >
           <Trans>Import</Trans>
         </ButtonPrimary>
