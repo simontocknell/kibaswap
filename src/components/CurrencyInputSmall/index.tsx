@@ -172,7 +172,6 @@ interface CurrencyInputPanelProps {
   showCommonBases?: boolean
   showCurrencyAmount?: boolean
   disableNonToken?: boolean
-  showOnlyTrumpCoins?: boolean
   renderBalance?: (amount: CurrencyAmount<Currency>) => ReactNode
   locked?: boolean
 }
@@ -196,7 +195,6 @@ export default function CurrencyInputPanelSmall({
   pair = null, // used for double token logo
   hideInput = false,
   locked = false,
-  showOnlyTrumpCoins,
   ...rest
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -208,8 +206,6 @@ export default function CurrencyInputPanelSmall({
     setModalOpen(false)
   }, [setModalOpen])
 
-  const { addToken, success } = useAddTokenToMetamask(currency as Currency | undefined)
-  const [showMetaTip, setShowMetaTip] = React.useState(false)
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
@@ -319,7 +315,6 @@ export default function CurrencyInputPanelSmall({
       </Container>
       {onCurrencySelect && (
         <CurrencySearchModal
-          showOnlyTrumpCoins={showOnlyTrumpCoins}
           isOpen={modalOpen}
           onDismiss={handleDismissSearch}
           onCurrencySelect={onCurrencySelect}

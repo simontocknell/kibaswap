@@ -21,7 +21,6 @@ interface CurrencySearchModalProps {
   showCommonBases?: boolean
   showCurrencyAmount?: boolean
   disableNonToken?: boolean
-  showOnlyTrumpCoins?:boolean
 }
 
 export enum CurrencyModalView {
@@ -31,16 +30,17 @@ export enum CurrencyModalView {
   importList,
 }
 
-export const  CurrencySearchModal = React.memo((props: CurrencySearchModalProps) => {
-const {  isOpen,
-  onDismiss,
-  onCurrencySelect,
-  selectedCurrency,
-  otherSelectedCurrency,
-  showCommonBases = false,
-  showCurrencyAmount = true,
-  disableNonToken = false,
-  showOnlyTrumpCoins = false} = props;
+export const CurrencySearchModal = React.memo((props: CurrencySearchModalProps) => {
+  const {
+    isOpen,
+    onDismiss,
+    onCurrencySelect,
+    selectedCurrency,
+    otherSelectedCurrency,
+    showCommonBases = false,
+    showCurrencyAmount = true,
+    disableNonToken = false,
+  } = props;
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
 
@@ -69,31 +69,43 @@ const {  isOpen,
   const [listURL, setListUrl] = useState<string | undefined>()
 
   // change min height if not searching
-  const minHeight = modalView === CurrencyModalView.importToken || modalView === CurrencyModalView.importList ? 40 : 80
-    const showManageView = () => setModalView(CurrencyModalView.manage)
-    const expertMode = useIsExpertMode()
-    const addToken = useAddUserToken()
-    const showImportView =  (token?: Token) => {
-      if (!expertMode) {
+  const minHeight = modalView === CurrencyModalView.importToken
+    || modalView === CurrencyModalView.importList ? 40 : 80
+
+  const showManageView = () =>
+    setModalView(CurrencyModalView.manage)
+
+  // if they are on "Expert Mode", we will not show the Import dialog to provide a quicker swapping experience
+  const expertMode = useIsExpertMode()
+  const addToken = useAddUserToken()
+
+  const showImportView = (token?: Token) => {
+    if (!expertMode) {
       setModalView(CurrencyModalView.importToken)
-      } else {
-        console.log(`importtoken`, importToken , token)
-        if (importToken || token) {
-          const theToken = (token ?? importToken) as Token
-          addToken(theToken)
-          handleCurrencySelect && handleCurrencySelect(theToken)
-          onDismiss()
-        }
+    } else {
+      if (importToken || token) {
+        const theToken = (token ?? importToken) as Token
+        // add the token to the users tokens (stored in localStorage)
+        addToken(theToken)
+        // select the imported token
+        handleCurrencySelect &&
+          handleCurrencySelect(theToken)
+
+        // close the search modal
+        onDismiss()
       }
     }
-    const onBackImportTokenFn =() =>
-    setModalView(prevView && prevView !== CurrencyModalView.importToken ? prevView : CurrencyModalView.search)
-  
+  }
+
+  const onBackImportTokenFn = () =>
+    setModalView(prevView && prevView !== CurrencyModalView.importToken ?
+      prevView : CurrencyModalView.search
+    )
+
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
       {modalView === CurrencyModalView.search ? (
         <CurrencySearch
-          showOnlyTrumpCoins={showOnlyTrumpCoins}
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}
@@ -105,16 +117,25 @@ const {  isOpen,
           setImportToken={setImportToken}
           showManageView={showManageView}
         />
-      ) : modalView === CurrencyModalView.importToken && importToken ? (
+      ) : modalView === CurrencyModalView.importToken &&
+        importToken ? (
         <ImportToken
           tokens={[importToken]}
           onDismiss={onDismiss}
-          list={importToken instanceof WrappedTokenInfo ? importToken.list : undefined}
+          list={
+            importToken instanceof WrappedTokenInfo ?
+              importToken.list :
+              undefined
+          }
           onBack={onBackImportTokenFn}
           handleCurrencySelect={handleCurrencySelect}
         />
-      ) : modalView === CurrencyModalView.importList && importList && listURL ? (
-        <ImportList list={importList} listURL={listURL} onDismiss={onDismiss} setModalView={setModalView} />
+      ) : modalView === CurrencyModalView.importList &&
+        importList && listURL ? (
+        <ImportList list={importList}
+          listURL={listURL}
+          onDismiss={onDismiss}
+          setModalView={setModalView} />
       ) : modalView === CurrencyModalView.manage ? (
         <Manage
           onDismiss={onDismiss}
