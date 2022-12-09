@@ -224,7 +224,7 @@ export const useBnbPrices = (): BnbPrices | undefined => {
     const [ttl, setTtl] = React.useState<number>(-1)
     React.useEffect(() => {
         if (!data || ttl < new Date().valueOf()) {
-            fetch('https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT')
+            fetch('https://data.binance.com/api/v3/ticker/price?symbol=BNBUSDT')
                 .then((res) => res.json())
                 .then((response) => {
                     setData(response.price)
