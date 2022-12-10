@@ -1,29 +1,30 @@
-import { Trans } from '@lingui/react'
+import { AlertCircle, Calendar, ChevronDown, Info } from 'react-feather'
 import { Currency, WETH9 } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
+import React, { useCallback } from 'react'
+import { routerAbi, routerAddress } from 'pages/Vote/routerAbi'
+import { useCurrencyBalance, useTokenBalance } from 'state/wallet/hooks'
+
 import Badge from 'components/Badge'
+import { BlueCard } from 'components/Card'
 import { ButtonPrimary } from 'components/Button'
 import Card from 'components/Card'
-import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import { CardSection } from 'components/earn/styled'
-import Tooltip from 'components/Tooltip'
-import moment from 'moment'
-import { Wrapper } from 'pages/RemoveLiquidity/styled'
-import { useKiba } from 'pages/Vote/VotePage'
-import React, { useCallback } from 'react'
-import { AlertCircle, Calendar, ChevronDown, Info } from 'react-feather'
-import { useCurrencyBalance, useTokenBalance } from 'state/wallet/hooks'
-import styled from 'styled-components/macro'
-import _ from 'lodash'
-import { USDC } from 'constants/tokens'
-import { routerAbi, routerAddress } from 'pages/Vote/routerAbi'
-import Web3 from 'web3'
-import { BlueCard } from 'components/Card'
-import { TYPE } from 'theme'
-import { GreyCard } from 'components/Card'
-import { useUSDCValue } from 'hooks/useUSDCPrice'
-import { walletconnect } from 'connectors'
+import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import { DarkCard } from 'components/Card'
+import { GreyCard } from 'components/Card'
+import { TYPE } from 'theme'
+import Tooltip from 'components/Tooltip'
+import { Trans } from '@lingui/react'
+import { USDC } from 'constants/tokens'
+import Web3 from 'web3'
+import { Wrapper } from 'pages/RemoveLiquidity/styled'
+import _ from 'lodash'
+import moment from 'moment'
+import styled from 'styled-components/macro'
+import { useKiba } from 'pages/Vote/VotePage'
+import { useUSDCValue } from 'hooks/useUSDCPrice'
+import { useWeb3React } from '@web3-react/core'
+import { walletconnect } from 'connectors'
 const DisabledMask = styled.div`
   position: relative;
   pointer-events: none;
@@ -54,14 +55,14 @@ type StoredAndTrackedGains = {
 
 
 export const GainsTracker = () => {
-  const { account, library,chainId } = useWeb3React()
+  const { account, library, chainId } = useWeb3React()
   const kibaBalance = useKiba(account)
-const CUSTOM_GAINS_KEY = React.useMemo(() => {
- let gainsKey = `custom_gains`
- if (chainId) gainsKey += `_${chainId}`;
- if (account) gainsKey += `_${account}`;
- return gainsKey;
-}, [account,chainId])
+  const CUSTOM_GAINS_KEY = React.useMemo(() => {
+    let gainsKey = `custom_gains`
+    if (chainId) gainsKey += `_${chainId}`;
+    if (account) gainsKey += `_${account}`;
+    return gainsKey;
+  }, [account, chainId])
 
   const [currency, setCurrency] = React.useState<any>(undefined)
   const onUserInput = (value: any) => {
@@ -83,7 +84,7 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
     } else {
       return false
     }
-  }, [ CUSTOM_GAINS_KEY,localStorage.getItem(CUSTOM_GAINS_KEY)])
+  }, [CUSTOM_GAINS_KEY, localStorage.getItem(CUSTOM_GAINS_KEY)])
 
   const [isTrackingGains, setIsTracking] = React.useState(isTrackingCustom)
 
@@ -121,7 +122,7 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
       }
     }
   }, [account, isTrackingGains, CUSTOM_GAINS_KEY, localStorage.getItem(CUSTOM_GAINS_KEY)])
- 
+
   const stopTrackingCustom = useCallback(() => {
     localStorage.removeItem(CUSTOM_GAINS_KEY)
     setCurrency(undefined)
@@ -136,7 +137,7 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
       return (currencyBalance - stored).toFixed(2)
     }
     return ''
-  }, [ 
+  }, [
     CUSTOM_GAINS_KEY,
     isTrackingGains,
     selectedCurrencyBalance,
@@ -190,7 +191,7 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
       setGainsUSD('0.00')
     }
   }, [selectedCurrencyBalance, CUSTOM_GAINS_KEY, library?.provider, localStorage.getItem(CUSTOM_GAINS_KEY), isTrackingGains])
-  
+
 
   const GainsLabel = styled.label`
     position: absolute;
@@ -211,22 +212,22 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
         return
       }
       const provider = library?.provider
-      
-        const w3 = new Web3(provider as any).eth
-        const routerContr = new w3.Contract(routerAbi as any, routerAddress)
-        const ten9 = 10 ** 9
-        const amount = +selectedCurrencyBalance.toFixed(0) * ten9
-        const address = currency?.address ? currency.address : selectedCurrencyBalance?.currency?.wrapped?.address
-        const amountsOut = routerContr.methods.getAmountsOut(BigInt(amount), [address, WETH9[1].address, USDC.address])
-        amountsOut.call().then((response: any) => {
-          const usdc = response[response.length - 1]
-          const ten6 = 10 ** 6
-          const usdcValue = usdc / ten6
-          setCurrencyValue(usdcValue.toFixed(2))
-        })
-     
-  }
-}, [selectedCurrencyBalance,  library?.provider, total, currency, account])
+
+      const w3 = new Web3(provider as any).eth
+      const routerContr = new w3.Contract(routerAbi as any, routerAddress)
+      const ten9 = 10 ** 9
+      const amount = +selectedCurrencyBalance.toFixed(0) * ten9
+      const address = currency?.address ? currency.address : selectedCurrencyBalance?.currency?.wrapped?.address
+      const amountsOut = routerContr.methods.getAmountsOut(BigInt(amount), [address, WETH9[1].address, USDC.address])
+      amountsOut.call().then((response: any) => {
+        const usdc = response[response.length - 1]
+        const ten6 = 10 ** 6
+        const usdcValue = usdc / ten6
+        setCurrencyValue(usdcValue.toFixed(2))
+      })
+
+    }
+  }, [selectedCurrencyBalance, library?.provider, total, currency, account])
 
   const showWarning = React.useMemo(() => {
     const showWarning = !!account && (!kibaBalance || +kibaBalance?.toFixed(2) <= 0)
@@ -235,10 +236,12 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
 
   return (
     <GainsWrapper  >
-      <Card style={{ background: 'rgba(0,0,0,.75)',
-    border: '1px solid #881512',
-    borderRadius: 42,
-     maxWidth: 600 }}>
+      <Card style={{
+        background: 'rgba(0,0,0,.75)',
+        border: '1px solid #881512',
+        borderRadius: 42,
+        maxWidth: 600
+      }}>
         <Wrapper>
           <CardSection>
             <div style={{ paddingLeft: 15, paddingRight: 15 }}>
@@ -293,7 +296,6 @@ const CUSTOM_GAINS_KEY = React.useMemo(() => {
               value={gains()}
               currency={selectedCurrencyBalance?.currency}
               onUserInput={handleTypeInput}
-              showOnlyTrumpCoins={false}
               onMax={undefined}
               fiatValue={undefined}
               onCurrencySelect={handleInputSelect}
