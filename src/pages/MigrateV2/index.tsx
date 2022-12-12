@@ -1,26 +1,27 @@
+import { BackArrow, StyledInternalLink, TYPE } from '../../theme'
+import { PairState, useV2Pairs } from 'hooks/useV2Pairs'
 import { ReactNode, useContext, useMemo } from 'react'
-import { Pair } from '@uniswap/v2-sdk'
-import { Token } from '@uniswap/sdk-core'
-import { ThemeContext } from 'styled-components/macro'
+import { keccak256, pack } from '@ethersproject/solidity'
+import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
+
 import { AutoColumn } from '../../components/Column'
 import { AutoRow } from '../../components/Row'
+import { BodyWrapper } from '../AppBody'
+import { Dots } from '../../components/swap/styleds'
+import { LightCard } from '../../components/Card'
+import MigrateSushiPositionCard from 'components/PositionCard/Sushi'
+import MigrateV2PositionCard from 'components/PositionCard/V2'
+import { Pair } from '@uniswap/v2-sdk'
+import QuestionHelper from '../../components/QuestionHelper'
+import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { Text } from 'rebass'
+import { ThemeContext } from 'styled-components/macro'
+import { Token } from '@uniswap/sdk-core'
+import { Trans } from '@lingui/macro'
 import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
+import { getCreate2Address } from '@ethersproject/address'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
-import { BackArrow, StyledInternalLink, TYPE } from '../../theme'
-import { LightCard } from '../../components/Card'
-import { BodyWrapper } from '../AppBody'
-import QuestionHelper from '../../components/QuestionHelper'
-import { Dots } from '../../components/swap/styleds'
-import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
-import MigrateV2PositionCard from 'components/PositionCard/V2'
-import MigrateSushiPositionCard from 'components/PositionCard/Sushi'
-import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
-import { PairState, useV2Pairs } from 'hooks/useV2Pairs'
-import { getCreate2Address } from '@ethersproject/address'
-import { pack, keccak256 } from '@ethersproject/solidity'
-import { Trans } from '@lingui/macro'
 
 function EmptyState({ message }: { message: ReactNode }) {
   return (
@@ -150,7 +151,7 @@ export default function MigrateV2() {
               {v2Pairs
                 .filter(([, pair]) => !!pair)
                 .map(([, pair]) => (
-                  <MigrateV2PositionCard key={(pair as Pair).liquidityToken.address} pair={pair as Pair} />
+                  <MigrateV2PositionCard key={(pair as any).liquidityToken.address} pair={pair as any} />
                 ))}
 
               {tokenPairsWithSushiBalance.map(({ sushiLiquidityToken, tokens }) => {

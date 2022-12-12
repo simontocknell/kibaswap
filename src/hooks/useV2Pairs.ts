@@ -1,10 +1,11 @@
-import { computePairAddress, Pair } from '@uniswap/v2-sdk'
+import { computePairAddress, Pair } from 'custom-uniswap-v2-sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
-import { V2_FACTORY_ADDRESSES } from '../constants/addresses'
+import { INIT_CODE_HASHES, V2_FACTORY_ADDRESSES } from '../constants/addresses'
 import { useMultipleContractSingleData } from '../state/multicall/hooks'
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
+import { FEES_DENOMINATORS, FEES_NUMERATORS } from 'constants/routing'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
@@ -28,8 +29,14 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           tokenB &&
           tokenA.chainId === tokenB.chainId &&
           !tokenA.equals(tokenB) &&
-          V2_FACTORY_ADDRESSES[tokenA.chainId]
-          ? computePairAddress({ factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId], tokenA, tokenB })
+          V2_FACTORY_ADDRESSES[tokenA.chainId] &&
+          INIT_CODE_HASHES[tokenA.chainId]
+          ? computePairAddress({
+            initCodeHash: INIT_CODE_HASHES[tokenA.chainId],
+            factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId],
+            tokenA,
+            tokenB,
+          })
           : undefined
       }),
     [tokens]
@@ -46,13 +53,19 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       if (loading) return [PairState.LOADING, null]
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
       if (!reserves) return [PairState.NOT_EXISTS, null]
+      const FAC = V2_FACTORY_ADDRESSES[tokenA.chainId];
+      const hash = INIT_CODE_HASHES[tokenA.chainId];
       const { reserve0, reserve1 } = reserves
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
         new Pair(
           CurrencyAmount.fromRawAmount(token0, reserve0.toString()),
-          CurrencyAmount.fromRawAmount(token1, reserve1.toString())
+          CurrencyAmount.fromRawAmount(token1, reserve1.toString()),
+          FAC,
+          hash,
+          FEES_NUMERATORS[tokenA.chainId],
+          FEES_DENOMINATORS[tokenA.chainId]
         ),
       ]
     })

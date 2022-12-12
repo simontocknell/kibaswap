@@ -1,6 +1,6 @@
 import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
 import { FlashBotsFrontRunRpc, flashbotsFrontRunProtectionProvider } from 'constants/chains'
-import { Router, Trade as V2Trade } from '@uniswap/v2-sdk'
+import { Router, Trade as V2Trade } from 'custom-uniswap-v2-sdk'
 import { SwapRouter, Trade as V3Trade, toHex } from '@uniswap/v3-sdk'
 import { isAddress, shortenAddress } from '../utils'
 import { useExpertModeManager, useSetFrontrunProtectionEnabled, useSetUserGasPreference, useUserGasPreference } from 'state/user/hooks'

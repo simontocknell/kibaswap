@@ -131,7 +131,7 @@
     "@types/react": "17.0.44"
   },
   "scripts": {
-    "deploy":"yarn craco build && yarn gh pages -d build",
+    "deploy": "yarn craco build && yarn gh pages -d build",
     "deploy-to-new-remote": "yarn craco build && yarn gh-pages -o new -d build",
     "typescript": "tsc -p .",
     "compile-contract-types": "yarn compile-external-abi-types && yarn compile-v3-contract-types",
@@ -168,6 +168,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@apollo/client": "^3.4.17",
+    "@binance-chain/bsc-connector": "^1.0.0",
     "@coreui/coreui": "^4.2.1",
     "@coreui/react": "^4.3.1",
     "@craco/craco": "^6.4.5",
@@ -225,7 +226,7 @@
     "@uniswap/merkle-distributor": "1.0.1",
     "@uniswap/redux-multicall": "^1.1.0",
     "@uniswap/router-sdk": "^1.0.5",
-    "@uniswap/sdk-core": "^3.0.1",
+    "@uniswap/sdk-core": "^3.1.0",
     "@uniswap/token-lists": "^1.0.0-beta.25",
     "@uniswap/v2-core": "1.0.0",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
@@ -251,6 +252,7 @@
     "clsx": "^1.2.1",
     "copy-to-clipboard": "^3.2.0",
     "cross-env": "^7.0.2",
+    "custom-uniswap-v2-sdk": "^3.2.0",
     "cypress": "^7.7.0",
     "d3": "^7.0.0",
     "eslint": "^7.11.0",
@@ -289,7 +291,6 @@
     "react-feather": "^2.0.8",
     "react-fullscreen": "^0.1.0",
     "react-ga": "^2.5.7",
-    "react-horizontal-scroll-container": "^1.0.1",
     "react-is": "^17.0.2",
     "react-loading-skeleton": "^3.0.3",
     "react-lottie": "^1.2.3",
@@ -335,6 +336,7 @@
     "workbox-expiration": "^6.1.0",
     "workbox-precaching": "^6.1.0",
     "workbox-routing": "^6.1.0",
-    "workbox-strategies": "^6.1.0"
+    "workbox-strategies": "^6.1.0",
+    "zustand": "^4.1.5"
   }
 }

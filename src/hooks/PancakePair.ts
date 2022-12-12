@@ -2,11 +2,13 @@ import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
 
 import { abi as IPancakePairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
-import { Pair } from '@uniswap/v2-sdk'
+import { computePairAddress, Pair } from 'custom-uniswap-v2-sdk'
 import { useActiveWeb3React } from './web3'
 import { useMemo } from 'react'
 import { useMultipleContractSingleData } from '../state/multicall/hooks'
 import { wrappedCurrency } from 'utils/binance.utils'
+import { INIT_CODE_HASHES, V2_FACTORY_ADDRESSES } from 'constants/addresses'
+import { FEES_DENOMINATORS, FEES_NUMERATORS } from 'constants/routing'
 
 const PAIR_INTERFACE = new Interface(IPancakePairABI)
 
@@ -32,20 +34,21 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        try {
-          return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA  as any, tokenB as any) : undefined
-        } catch (error: any) {
-          // Debug Invariant failed related to this line
-          console.error(
-            error.msg,
-            `- pairAddresses: ${tokenA?.address}-${tokenB?.address}`,
-            `chainId: ${tokenA?.chainId}`,
-          )
-
-          return undefined
-        }
+        return tokenA &&
+          tokenB &&
+          tokenA.chainId === tokenB.chainId &&
+          !tokenA.equals(tokenB) &&
+          V2_FACTORY_ADDRESSES[tokenA.chainId] &&
+          INIT_CODE_HASHES[tokenA.chainId]
+          ? computePairAddress({
+            initCodeHash: INIT_CODE_HASHES[tokenA.chainId],
+            factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId],
+            tokenA,
+            tokenB,
+          })
+          : undefined;
       }),
-    [tokens],
+    [tokens]
   )
 
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
@@ -59,6 +62,8 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       if (loading) return [PairState.LOADING, null]
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
       if (!reserves) return [PairState.NOT_EXISTS, null]
+      const FAC = V2_FACTORY_ADDRESSES[tokenA.chainId];
+      const IH = INIT_CODE_HASHES[tokenA.chainId];
       const { reserve0, reserve1 } = reserves
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
@@ -66,6 +71,10 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
         new Pair(
           CurrencyAmount.fromRawAmount(token0 as any, reserve0.toString() as any),
           CurrencyAmount.fromRawAmount(token1 as any, reserve1.toString() as any),
+          FAC,
+          IH,
+          FEES_NUMERATORS[tokenA.chainId],
+          FEES_DENOMINATORS[tokenA.chainId]
         ),
       ]
     })

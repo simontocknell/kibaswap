@@ -15,12 +15,14 @@ import {
   WBTC_OPTIMISM,
   WETH9_EXTENDED,
   renBTC,
+  BASE_TOKENS,
 } from './tokens'
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 
 import { SupportedChainId } from './chains'
 import { binanceTokens } from 'utils/binance.tokens'
+import JSBI from 'jsbi'
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
@@ -39,6 +41,15 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [SupportedChainId.MAINNET]: [...WETH_ONLY[SupportedChainId.MAINNET], DAI, USDC, USDT, WBTC],
   [SupportedChainId.OPTIMISM]: [...WETH_ONLY[SupportedChainId.OPTIMISM], DAI_OPTIMISM, USDT_OPTIMISM, WBTC_OPTIMISM],
+  [SupportedChainId.BINANCE]: [...WETH_ONLY[SupportedChainId.BINANCE],
+  BASE_TOKENS[SupportedChainId.BINANCE].CAKE,
+  BASE_TOKENS[SupportedChainId.BINANCE].BUSD,
+  BASE_TOKENS[SupportedChainId.BINANCE].USDT,
+  BASE_TOKENS[SupportedChainId.BINANCE].BTCB,
+  BASE_TOKENS[SupportedChainId.BINANCE].UST,
+  BASE_TOKENS[SupportedChainId.BINANCE].ETH,
+  ],
+
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [SupportedChainId.MAINNET]: {
@@ -66,7 +77,7 @@ export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[
  */
 export const COMMON_BASES: ChainCurrencyList = {
   [SupportedChainId.MAINNET]: [
-    new Token(SupportedChainId.MAINNET, '0x005d1123878fc55fbd56b54c73963b234a64af3c', 9, 'KIBA', 'Kiba Inu'),
+    new Token(SupportedChainId.MAINNET, '0x005d1123878fc55fbd56b54c73963b234a64af3c', 18, 'KIBA', 'Kiba Inu'),
     ExtendedEther.onChain(SupportedChainId.MAINNET),
     DAI,
     USDC,
@@ -83,7 +94,7 @@ export const COMMON_BASES: ChainCurrencyList = {
     WETH9_EXTENDED[SupportedChainId.RINKEBY],
   ],
   [SupportedChainId.BINANCE]: [
-    new Token(SupportedChainId.BINANCE, '0xc3afde95b6eb9ba8553cdaea6645d45fb3a7faf5', 9, 'KIBA', 'Kiba Inu'),
+    new Token(SupportedChainId.BINANCE, '0xc3afde95b6eb9ba8553cdaea6645d45fb3a7faf5', 18, 'KIBA', 'Kiba Inu'),
     binanceTokens.bnb,
     binanceTokens.wbnb,
     binanceTokens.busd,
@@ -126,3 +137,19 @@ export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
     [DAI, USDT],
   ],
 }
+
+export const FEES_NUMERATORS: {
+  [chainId: number]: JSBI;
+} = {
+  [SupportedChainId.BINANCE]: JSBI.BigInt(9975),
+  [SupportedChainId.MAINNET]: JSBI.BigInt(997),
+  [SupportedChainId.ARBITRUM_ONE]: JSBI.BigInt(997),
+};
+
+export const FEES_DENOMINATORS: {
+  [chainId: number]: JSBI;
+} = {
+  [SupportedChainId.BINANCE]: JSBI.BigInt(10000),
+  [SupportedChainId.MAINNET]: JSBI.BigInt(1000),
+  [SupportedChainId.ARBITRUM_ONE]: JSBI.BigInt(1000),
+};

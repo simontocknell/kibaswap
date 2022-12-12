@@ -9,7 +9,7 @@ import { AppState } from '../index'
 import JSBI from 'jsbi'
 import { ParsedQs } from 'qs'
 import { SwapState } from './reducer'
-import { Trade as V2Trade } from '@uniswap/v2-sdk'
+import { Trade as V2Trade } from 'custom-uniswap-v2-sdk'
 import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import { Version } from '../../hooks/useToggledVersion'
 import { isAddress } from '../../utils'
@@ -66,9 +66,9 @@ export function useSwapActionHandlers(): {
   )
 
   const onSwitchUseChangeRecipient = useCallback(
-    (on: boolean) => { 
-      dispatch(setUseOtherAddress({on}))
-    }, 
+    (on: boolean) => {
+      dispatch(setUseOtherAddress({ on }))
+    },
     [dispatch]
   )
 
