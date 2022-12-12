@@ -194,7 +194,7 @@ export const SelectiveChartWithPair = () => {
     const [loadingNewData, setLoadingNewData] = React.useState(false);
 
     // if they change chains on a chart page , need to redirect them back to the select charts page
-    const [userChartHistory, updateUserChartHistory] =
+    const [, updateUserChartHistory] =
         useUserChartHistoryManager();
 
 
@@ -303,7 +303,7 @@ export const SelectiveChartWithPair = () => {
 
     const [tabs, setTabs] = React.useState(defaultTabs)
 
-    const onActiveChange = (tab: any) => setTabs(old => old.map(oldTab => oldTab.label == tab.label ? { ...oldTab, active: true } : {...oldTab, active: false }))
+    const onActiveChange = (tab: any) => setTabs(old => old.map(oldTab => oldTab.label == tab.label ? { ...oldTab, active: true } : { ...oldTab, active: false }))
 
     const pageMeta = React.useMemo(function () {
         const data = screenerToken ? screenerToken : screenerPair
@@ -401,7 +401,7 @@ export const SelectiveChartWithPair = () => {
 
     const prices = useBnbPrices()
     /* Memoized function to render the Double Currency Logo for the current chart */
-    const LogoMemo = React.useMemo(() => {
+    const LogoMemo = () => {
         return Boolean(!!hasSelectedData) ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, justifyContent: 'space-between' }}>
                 {network == 'ethereum' && ethPrice &&
@@ -443,119 +443,20 @@ export const SelectiveChartWithPair = () => {
                 </span>
             </div>
         ) : null;
-    }, [mainnetCurrency, fallbackFromPair, screenerPair?.baseToken, prices?.current, network, ethPrice, pairCurrency, hasSelectedData]);
-    /* memoized function to render the currency input select that represents the current viewed chart's token */
-    const PanelMemo = React.useMemo(() => {
-        return embedModel.embedMode ? null : !Boolean(chainId) || Boolean(chainId) ? (
-            <>
-                <div
-                    style={{
-                        paddingTop: hasSelectedData ? "" : 20,
-                        width: "100%",
-                        gap: 20,
-                        display: "flex",
-                        flexFlow: isMobile ? "column wrap" : "row nowrap",
-                        alignItems: "center",
-                    }}
-                >
-                    {!hasSelectedData ? (
-                        <>
-                            <ButtonSecondary onClick={toggleShowSearchOn}>
-                                <TYPE.black style={{ cursor: "pointer" }}>
-                                    Search for a token to view <ArrowUpRight />
-                                </TYPE.black>
-                            </ButtonSecondary>
-                        </>
-                    ) : null}
-                    <CurrencyInputPanel
-                        label={"gains"}
-                        showMaxButton={false}
-                        value={``}
-                        showCurrencyAmount={false}
-                        hideBalance={true}
-                        hideInput={true}
-                        currency={!hasSelectedData ? undefined : mainnetCurrency}
-                        onUserInput={_.noop}
-                        onMax={undefined}
-                        fiatValue={undefined}
-                        onCurrencySelect={onCurrencySelect}
-                        otherCurrency={undefined}
-                        showCommonBases={false}
-                        id="chart-currency-input"
-                    />
-                </div>
-            </>
-        ) : null;
-    }, [mainnetCurrency, embedModel.embedMode, hasSelectedData, isMobile, chainId]);
+    }
+
     const priceChange = React.useMemo(() => {
-        if (!screenerToken && !screenerPair) return {}
-        if (screenerPair?.priceChange) return screenerPair?.priceChange
-        if (screenerToken && screenerToken.priceChange) return screenerToken.priceChange
+        if (!screenerToken && !screenerPair)
+            return {}
+
+        if (screenerPair?.priceChange)
+            return screenerPair?.priceChange
+
+        if (screenerToken && screenerToken.priceChange)
+            return screenerToken.priceChange
+
         return {}
     }, [screenerToken, screenerPair])
-    const getRetVal = React.useMemo(
-        function () {
-            let retVal = "", pairSymbol = "";
-
-            const { selectedCurrency: currency } = selectedCurrency;
-            if (chainId === 1 || !chainId) {
-                retVal = "UNISWAP:";
-                if (pairs && pairs.length) {
-                    pairSymbol = `${pairs?.[0]?.token0?.symbol?.toLowerCase() ===
-                        currency?.symbol?.toLowerCase()
-                        ? pairs?.[0]?.token1?.symbol
-                        : pairs?.[0]?.token0?.symbol
-                        }`;
-                    if (pairSymbol === "DAI")
-                        return `DOLLAR${currency?.symbol?.replace("$", "")}DAI`;
-                    retVal += `${currency?.symbol}${pairs?.[0]?.token0?.symbol === currency?.symbol
-                        ? pairs?.[0]?.token1?.symbol
-                        : pairs?.[0]?.token0?.symbol
-                        }`;
-                } else {
-                    if (
-                        screenerPair?.baseToken?.address &&
-                        screenerPair?.baseToken?.symbol &&
-                        screenerPair?.baseToken?.symbol !== "WETH"
-                    )
-                        retVal = `${retVal}${screenerPair?.baseToken?.symbol}WETH`;
-                    else if (currency && currency.symbol && currency.symbol !== "WETH")
-                        retVal = `UNISWAP:${currency.symbol}WETH`;
-                    else if (currency && currency.symbol && currency.symbol === "WETH")
-                        retVal = chainId == 1 ? "UNISWAP:WETHUSDT" : chainId == 56 ? "WETHWBNB" : `UNISWAP:WETHUSDT`;
-
-                    if (
-                        (retVal == "UNISWAP:" && screenerPair?.baseToken?.symbol) ||
-                        mainnetCurrency?.symbol
-                    ) {
-                        retVal = `UNISWAP:${screenerPair?.baseToken?.symbol ? screenerPair?.baseToken?.symbol : mainnetCurrency?.symbol
-                            }WETH`;
-                    }
-                }
-            } else if (chainId && chainId === 56) {
-                if (screenerPair?.baseToken?.symbol == "BNB" || screenerPair?.baseToken?.symbol == "WBNB") {
-                    return "WBNBBUSD"
-                }
-                retVal = "PANCAKESWAP:" + pairSymbol + screenerPair?.baseToken?.symbol;
-            }
-            return retVal;
-        },
-        [
-            screenerPair?.baseToken?.symbol,
-            pairs,
-            selectedCurrency.selectedCurrency,
-            selectedCurrency,
-            mainnetCurrency,
-        ]
-    );
-    const deps = [
-        selectedCurrency,
-        pairs,
-        getRetVal,
-        screenerPair?.baseToken?.symbol,
-        chainId,
-    ];
-    const tokenSymbolForChart = React.useMemo(() => getRetVal, deps);
     const [collapsed, setCollapsed] = React.useState(false);
     const gridTemplateColumns = React.useMemo(
         function () {
@@ -742,9 +643,9 @@ export const SelectiveChartWithPair = () => {
                                     </div>
                                 )}
 
-                            {PanelMemo}
                             {Boolean(!hasSelectedData) && <div style={{ width: "100%", marginTop: 15, marginBottom: 15 }}>
-                                <TabsList tabs={tabs} onActiveChanged={onActiveChange} />
+                                <RecentlyViewedCharts />
+                                <FavoriteTokensList />
                             </div>}
 
                         </StyledDiv>
@@ -783,7 +684,7 @@ export const SelectiveChartWithPair = () => {
                                                     ("" as string)
                                                 }
                                                 address={address as string}
-                                                tokenSymbolForChart={tokenSymbolForChart}
+                                                tokenSymbolForChart={''}
                                             />
                                             <TableQuery
                                                 transactionData={params?.network == 'bsc' ? bscTransactionData : transactionData}

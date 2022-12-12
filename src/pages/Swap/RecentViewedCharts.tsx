@@ -75,14 +75,14 @@ export const RecentlyViewedCharts = () => {
             </TYPE.black>
         </div>
 
-        <Marquee  play={play} direction="right" speed={50} gradientWidth={7} gradient={false} pauseOnHover>
-            <FixedContainer style={{ marginBottom: 15}}>
-                <ScrollableRow style={{ paddingBottom:15, paddingTop: 15, display: 'flex', gap: 30, alignItems: 'center' }}>
+        {play && <Marquee play={play} direction="right" speed={50} gradientWidth={7} gradient={false} pauseOnHover>
+            <FixedContainer style={{ marginBottom: 15 }}>
+                <ScrollableRow style={{ paddingBottom: 15, paddingTop: 15, display: 'flex', gap: 30, alignItems: 'center' }}>
 
 
                     {_.orderBy(
                         _.uniqBy(
-                            userChartHistory, 
+                            userChartHistory,
                             (a) => (a?.pair ? a?.pair?.toLowerCase() : a?.token?.address?.toLowerCase())
                         ).filter((item) => item?.chainId === chainId),
                         (a) => a?.time
@@ -125,7 +125,7 @@ export const RecentlyViewedCharts = () => {
                                             <TYPE.small>
                                                 <span>{item?.token?.symbol} </span>
                                                 <br />
-                                                <p style={{margin:0, width: 100, overflow:'hidden', whiteSpace:'nowrap', textOverflow: 'ellipsis'}}> {item?.token?.name}</p>
+                                                <p style={{ margin: 0, width: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}> {item?.token?.name}</p>
                                             </TYPE.small>
                                         </div>
                                         <TYPE.black alignItems="center">
@@ -137,8 +137,8 @@ export const RecentlyViewedCharts = () => {
                                                     alignItems: "center",
                                                 }}
                                             >
-                                                <span style={{display:'flex', alignItems:'center',fontSize:11}}>
-                                                    View Chart <ArrowUpRight /> 
+                                                <span style={{ display: 'flex', alignItems: 'center', fontSize: 11 }}>
+                                                    View Chart <ArrowUpRight />
                                                     {!Boolean(item?.network) && Boolean(item.chainId) &&
                                                         <img src={(chainImgMap as any)[(chainMap as any)[item?.chainId]]} style={{ width: 20, height: 20, borderRadius: 60 }} />
                                                     }
@@ -146,7 +146,7 @@ export const RecentlyViewedCharts = () => {
                                                         <img src={(chainImgMap as any)[item?.network]} style={{ width: 20, height: 20, borderRadius: 60 }} />
                                                     }
                                                 </span>
-                                                
+
                                             </div>
                                         </TYPE.black>
                                     </div>
@@ -156,7 +156,7 @@ export const RecentlyViewedCharts = () => {
 
                 </ScrollableRow>
             </FixedContainer>
-        </Marquee>
+        </Marquee>}
         {!Boolean(userChartHistory.length) && <RecentCard>
             <Info />
             <TYPE.main>Your most recent viewed charts will appear here</TYPE.main>
