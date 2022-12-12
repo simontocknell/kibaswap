@@ -689,7 +689,6 @@ export default function Swap({ history }: RouteComponentProps) {
   //     );
   //   }
   // }, [outputCurrencyColor])
-
   const toggleShowChart = () => setShowChart(!showChart)
   const onViewChangeFn = (view: any) => setView(view)
   return (
@@ -707,7 +706,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <AddressManager isOpen={showAddressManager} onDismiss={dismissAddressManager} />
         {(
           <>
-                  {view === 'swap' && chainId && chainId === 1 && <SwapSubHeader allowedSlippage={allowedSlippage}/>}
+                  {view === 'swap' && chainId && <SwapSubHeader allowedSlippage={allowedSlippage}/>}
 
             {view === 'swap' && <Wrapper id="swap-page" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, paddingTop: 5}}>
               <ConfirmSwapModal
@@ -813,7 +812,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         ) : toggledVersion === Version.v2 && isTradeBetter(v2Trade, v3Trade) ? (
                           <BetterTradeLink version={Version.v3} otherTradeNonexistent={!v2Trade} />
                         ) : (
-                          toggledVersion === Version.v2 && (
+                          toggledVersion === Version.v2 && !isBinance &&(
                             <ButtonGray
                               width="fit-content"
                               padding="0.1rem 0.5rem 0.1rem 0.35rem"
