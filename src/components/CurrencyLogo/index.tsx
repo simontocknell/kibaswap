@@ -20,6 +20,11 @@ interface LogoProps extends Pick<ImageProps, 'style' | 'alt' | 'className'> {
   size?: string
 }
 
+const NativeSources: Record<string, string> = {
+  'eth': EthereumLogo,
+  'bnb': 'https://cryptologos.cc/logos/binance-coin-bnb-logo.png'
+}
+
 export const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
@@ -138,7 +143,7 @@ const CurrencyLogo = React.memo(({
   }, [currency, chainId, uriLocations])
 
   if (currency?.isNative) {
-    return <StyledEthereumLogo src={EthereumLogo} size={size} style={style} {...rest} />
+    return <StyledEthereumLogo src={NativeSources[currency?.symbol?.toLowerCase() as string]} size={size} style={style} {...rest} />
   }
 
   if (trending.some((token) => token?.address?.toLowerCase() === currency?.address?.toLowerCase())) {
@@ -147,7 +152,7 @@ const CurrencyLogo = React.memo(({
   }
 
   return <StyledLogo symbol={currency?.symbol} size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} {...rest} />
-}, (oldProps, newProps) => {  
+}, (oldProps, newProps) => {
   return oldProps?.currency?.wrapped?.address === newProps?.currency?.wrapped?.address?.toLowerCase() &&
     oldProps.currency?.name?.toLowerCase() === newProps?.currency?.name?.toLowerCase() &&
     oldProps?.currency?.symbol?.toLowerCase() === newProps?.currency?.symbol?.toLowerCase()

@@ -1,4 +1,5 @@
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
+import { INIT_CODE_HASHES, V2_FACTORY_ADDRESSES } from '../../constants/addresses'
 import { Pair, computePairAddress } from 'custom-uniswap-v2-sdk'
 import { Percent, Token } from '@uniswap/sdk-core'
 import { SearchPreferenceState, TokenFavorite } from './reducer'
@@ -32,7 +33,6 @@ import JSBI from 'jsbi'
 import { L2_CHAIN_IDS } from 'constants/chains'
 import { L2_DEADLINE_FROM_NOW } from 'constants/misc'
 import { SupportedLocale } from 'constants/locales'
-import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
 import _ from 'lodash'
 import flatMap from 'lodash.flatmap'
 import { shallowEqual } from 'react-redux'
@@ -68,7 +68,7 @@ export function useIsDarkMode(): boolean {
     shallowEqual
   )
 
- return useAppSelector((state ) => state.user.userDarkMode || false)
+  return useAppSelector((state) => state.user.userDarkMode || false)
 }
 
 export function useDarkModeManager(): [boolean, () => void] {
@@ -87,26 +87,26 @@ export function useUserFavoritesManager(): [TokenFavorite[], (favorites: TokenFa
   const favorites = useAppSelector((state) => state.user.favorites)
 
   const updateUserFavorites = useCallback((_favorites: TokenFavorite[]) => {
-    dispatch(updateFavoritedTokens({newFavorites: _favorites}))
+    dispatch(updateFavoritedTokens({ newFavorites: _favorites }))
   }, [favorites, dispatch])
 
   return [favorites, updateUserFavorites]
 }
 
-export function useAddPairToFavorites () {
-  const [current,updateFavorites] = useUserFavoritesManager()
+export function useAddPairToFavorites() {
+  const [current, updateFavorites] = useUserFavoritesManager()
 
   const addToFavorites = useCallback((pairAddress: string, network: string, tokenAddress: string, tokenName: string, tokenSymbol: string) => {
-    const updated = _.uniqBy([...(current || []), {pairAddress, network, tokenName, tokenSymbol, tokenAddress}], pair => pair.pairAddress)
+    const updated = _.uniqBy([...(current || []), { pairAddress, network, tokenName, tokenSymbol, tokenAddress }], pair => pair.pairAddress)
 
     updateFavorites(updated)
   }, [current, updateFavorites])
 
 
-  const removeFromFavorites = useCallback((pairAddress:string) => {
+  const removeFromFavorites = useCallback((pairAddress: string) => {
     const updated = [...(current || []).filter(pair => pair.pairAddress !== pairAddress)]
     updateFavorites(updated)
-  }, [ current, updateFavorites ])
+  }, [current, updateFavorites])
 
   return {
     addToFavorites,
@@ -114,7 +114,7 @@ export function useAddPairToFavorites () {
   }
 }
 
-export function useIsPairFavorited (pairAddress: string) {
+export function useIsPairFavorited(pairAddress: string) {
   const [favorites,] = useUserFavoritesManager()
 
   return useMemo(() => {
@@ -128,7 +128,7 @@ export function useUserLocale(): SupportedLocale | null {
 
 export function useUserSearchPrefManager(): [SearchPreferenceState, (newState: SearchPreferenceState) => void] {
   const dispatch = useAppDispatch()
-  const prefs = useAppSelector((state ) => state.user.searchPreferences || [])
+  const prefs = useAppSelector((state) => state.user.searchPreferences || [])
 
   const updatePrefs = useCallback((newPrefs: SearchPreferenceState) => {
     dispatch(updateUserSearchPreferences({ newPreferences: newPrefs }))
@@ -139,7 +139,7 @@ export function useUserSearchPrefManager(): [SearchPreferenceState, (newState: S
 
 export function useUserChartHistoryManager(): [any[], (payload: any[]) => void] {
   const dispatch = useAppDispatch()
-  const history = useAppSelector((state ) => state.user.chartHistory || [])
+  const history = useAppSelector((state) => state.user.chartHistory || [])
 
   const updateHistory = useCallback((updatedHistory: any[]) => {
     dispatch(updateUserChartHistory({ chartHistory: updatedHistory }))
@@ -292,7 +292,7 @@ export function useUserSlippageTolerance(): Percent | 'auto' {
   )
 }
 
-export function useUserGasPreference(): { ultra?:boolean, low?: boolean, medium?:boolean, high?:boolean, custom?: 0, useOnce?: boolean } {
+export function useUserGasPreference(): { ultra?: boolean, low?: boolean, medium?: boolean, high?: boolean, custom?: 0, useOnce?: boolean } {
 
   const userGasSelection = useAppSelector((state) => {
     return state.user.preferredGas
@@ -412,7 +412,7 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
 
   return new Token(
     tokenA.chainId,
-    computePairAddress({ factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId], tokenA, tokenB }),
+    computePairAddress({ initCodeHash: INIT_CODE_HASHES[tokenA.chainId], factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId], tokenA, tokenB }),
     18,
     'UNI-V2',
     'Uniswap V2'
@@ -434,22 +434,22 @@ export function useTrackedTokenPairs(): [Token, Token][] {
     () =>
       chainId
         ? flatMap(Object.keys(tokens), (tokenAddress) => {
-            const token = tokens[tokenAddress]
-            // for each token on the current chain,
-            return (
-              // loop though all bases on the current chain
-              (BASES_TO_TRACK_LIQUIDITY_FOR[chainId] ?? [])
-                // to construct pairs of the given token with each base
-                .map((base) => {
-                  if (base.address === token.address) {
-                    return null
-                  } else {
-                    return [base, token]
-                  }
-                })
-                .filter((p): p is [Token, Token] => p !== null)
-            )
-          })
+          const token = tokens[tokenAddress]
+          // for each token on the current chain,
+          return (
+            // loop though all bases on the current chain
+            (BASES_TO_TRACK_LIQUIDITY_FOR[chainId] ?? [])
+              // to construct pairs of the given token with each base
+              .map((base) => {
+                if (base.address === token.address) {
+                  return null
+                } else {
+                  return [base, token]
+                }
+              })
+              .filter((p): p is [Token, Token] => p !== null)
+          )
+        })
         : [],
     [tokens, chainId]
   )

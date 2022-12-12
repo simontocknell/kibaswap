@@ -1,4 +1,5 @@
 import { Currency, CurrencyAmount, Token, WETH9 } from '@uniswap/sdk-core'
+import { INIT_CODE_HASHES, V2_FACTORY_ADDRESSES } from 'constants/addresses'
 import { useEffect, useState } from 'react'
 
 import { BIG_INT_ZERO } from 'constants/misc';
@@ -83,7 +84,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   const pairAddresses = React.useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB) : undefined
+        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB, V2_FACTORY_ADDRESSES[chainId as number], INIT_CODE_HASHES[chainId as number]) : undefined
       }),
     [tokens],
   )
@@ -172,25 +173,25 @@ export const useBinanceTokenBalance = (tokenAddress: string, account?: string | 
   })
   const contract = getBep20Contract(tokenAddress)
   const fetchBalance = React.useCallback(async () => {
-      try {
-        const res = await contract.balanceOf(account)
-        const decimals = await contract.decimals();
-        if (!isEqual(+new BigNumber(res.toString()).toFixed(0) / 10 ** decimals, balanceState.balance)) {
-          console.log(`Time since last refresh: ${moment(new Date()).diff(lastRefresh, 'seconds')} seconds`);
-          setBalanceState({ balance: +new BigNumber(res.toString()).toFixed(0) / 10 ** decimals, fetchStatus: SUCCESS })
-          console.log(`updated ${+new BigNumber(res.toString()).toFixed(0) / 10 ** decimals} current ${balanceState.balance}`)
-          localStorage.setItem(previousStoredAccountKey, (+new BigNumber(res.toString()).toFixed(0) / 10 ** decimals).toString());
-        }
-      } catch (e) {
-        console.error(e)
-        setBalanceState((prev) => ({
-          ...prev,
-          fetchStatus: FAILED,
-        }))
+    try {
+      const res = await contract.balanceOf(account)
+      const decimals = await contract.decimals();
+      if (!isEqual(+new BigNumber(res.toString()).toFixed(0) / 10 ** decimals, balanceState.balance)) {
+        console.log(`Time since last refresh: ${moment(new Date()).diff(lastRefresh, 'seconds')} seconds`);
+        setBalanceState({ balance: +new BigNumber(res.toString()).toFixed(0) / 10 ** decimals, fetchStatus: SUCCESS })
+        console.log(`updated ${+new BigNumber(res.toString()).toFixed(0) / 10 ** decimals} current ${balanceState.balance}`)
+        localStorage.setItem(previousStoredAccountKey, (+new BigNumber(res.toString()).toFixed(0) / 10 ** decimals).toString());
       }
-    }, [tokenAddress, chainId, account, balanceState, contract])
+    } catch (e) {
+      console.error(e)
+      setBalanceState((prev) => ({
+        ...prev,
+        fetchStatus: FAILED,
+      }))
+    }
+  }, [tokenAddress, chainId, account, balanceState, contract])
 
-  const [lastRefresh, setLastRefresh ] = React.useState<Date>(new Date())
+  const [lastRefresh, setLastRefresh] = React.useState<Date>(new Date())
   useInterval(() => {
     if (account && chainId && chainId === 56) {
       setLastRefresh(new Date())

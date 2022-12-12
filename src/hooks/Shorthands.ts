@@ -276,7 +276,7 @@ export const WRAPPED_NATIVE_CURRENCY: { [chainId: number]: Token | undefined } =
     'WETH',
     'Wrapped Ether'
   ),
- 
+
   [SupportedChainId.ARBITRUM_ONE]: new Token(
     SupportedChainId.ARBITRUM_ONE,
     '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
@@ -330,6 +330,26 @@ class MaticNativeCurrency extends NativeCurrency {
   }
 }
 
+
+class BinanceNativeCurrency extends NativeCurrency {
+  equals(other: Currency): boolean {
+    return other.isNative && other.chainId === this.chainId
+  }
+
+  get wrapped(): Token {
+    if ((this.chainId) !== 56) throw new Error('Not bsc')
+    const wrapped = WRAPPED_NATIVE_CURRENCY[this.chainId]
+    invariant(wrapped instanceof Token)
+    return wrapped
+  }
+
+  public constructor(chainId: number) {
+    if ((chainId) !== 56) throw new Error('Not bsc')
+    super(chainId, 18, 'BNB', 'Binance Token')
+  }
+}
+
+
 export class ExtendedEther extends Ether {
   public get wrapped(): Token {
     const wrapped = WRAPPED_NATIVE_CURRENCY[this.chainId]
@@ -348,7 +368,9 @@ const cachedNativeCurrency: { [chainId: number]: NativeCurrency | Token } = {}
 export function nativeOnChain(chainId: number): NativeCurrency | Token {
   if (cachedNativeCurrency[chainId]) return cachedNativeCurrency[chainId]
   let nativeCurrency: NativeCurrency | Token
-  if (isMatic(chainId)) {
+  if (chainId === 56) {
+    nativeCurrency = new BinanceNativeCurrency(chainId)
+  } else if (isMatic(chainId)) {
     nativeCurrency = new MaticNativeCurrency(chainId)
   } else {
     nativeCurrency = ExtendedEther.onChain(chainId)
@@ -368,5 +390,6 @@ export const TOKEN_SHORTHANDS: { [shorthand: string]: { [chainId in SupportedCha
     [SupportedChainId.RINKEBY]: USDC_RINKEBY.address,
     [SupportedChainId.KOVAN]: USDC_KOVAN.address,
     [SupportedChainId.ROPSTEN]: USDC_ROPSTEN.address,
+    [SupportedChainId.BINANCE]: binanceTokens.usdc.address
   },
 }

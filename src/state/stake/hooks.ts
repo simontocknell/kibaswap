@@ -1,15 +1,17 @@
-import { t } from '@lingui/macro'
-import { Token, CurrencyAmount } from '@uniswap/sdk-core'
-import { Pair } from 'custom-uniswap-v2-sdk'
-import JSBI from 'jsbi'
-import { useMemo } from 'react'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { DAI, UNI, USDC, USDT, WBTC, WETH9_EXTENDED } from '../../constants/tokens'
-import { useActiveWeb3React } from '../../hooks/web3'
+import { INIT_CODE_HASHES, V2_FACTORY_ADDRESSES } from 'constants/addresses'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
-import { tryParseAmount } from '../swap/hooks'
-import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
+
 import { Interface } from '@ethersproject/abi'
+import JSBI from 'jsbi'
+import { Pair } from 'custom-uniswap-v2-sdk'
 import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/StakingRewards.json'
+import { t } from '@lingui/macro'
+import { tryParseAmount } from '../swap/hooks'
+import { useActiveWeb3React } from '../../hooks/web3'
+import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
+import { useMemo } from 'react'
 
 const STAKING_REWARDS_INTERFACE = new Interface(STAKING_REWARDS_ABI)
 
@@ -160,7 +162,9 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
         const tokens = info[index].tokens
         const dummyPair = new Pair(
           CurrencyAmount.fromRawAmount(tokens[0], '0'),
-          CurrencyAmount.fromRawAmount(tokens[1], '0')
+          CurrencyAmount.fromRawAmount(tokens[1], '0'),
+          V2_FACTORY_ADDRESSES[chainId],
+          INIT_CODE_HASHES[chainId]
         )
 
         // check for account, if no account set to 0
