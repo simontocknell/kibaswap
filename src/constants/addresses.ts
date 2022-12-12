@@ -10,11 +10,12 @@ export const kibaNftAbi = {} // add ABI here after deploying
 
 export const UNI_ADDRESS: AddressMap = constructSameAddressMap('0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984')
 export const MULTICALL_ADDRESS: AddressMap = {
-  ...constructSameAddressMap('0x1F98415757620B543A52E61c46B32eB19261F984', [SupportedChainId.OPTIMISTIC_KOVAN]),
+  ...constructSameAddressMap('0x1F98415757620B543A52E61c46B32eB19261F984',
+    [SupportedChainId.OPTIMISTIC_KOVAN]),
   [SupportedChainId.OPTIMISM]: '0x90f872b3d8f33f305e0250db6A2761B354f7710A',
   [SupportedChainId.ARBITRUM_ONE]: '0xadF885960B47eA2CD9B55E6DAc6B42b7Cb2806dB',
   [SupportedChainId.ARBITRUM_RINKEBY]: '0xa501c031958F579dB7676fF1CE78AD305794d579',
-  [SupportedChainId.BINANCE]: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B'
+  [SupportedChainId.BINANCE]: '0xf0253d126a3DF588223B090739eacaeF2399AD43'
 }
 
 export const V2_FACTORY_ADDRESSES: {
