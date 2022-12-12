@@ -34,12 +34,12 @@ const INPUT_FRACTION_AFTER_FEES: { [chainId: number]: Percent } = {
   ),
 };
 
-interface AdvancedSwapDetailsOldProps {
+interface AdvancedSwapDetailsProps {
   trade?: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
   allowedSlippage: Percent
 }
 
-export function AdvancedSwapDetailsOld({ trade, allowedSlippage }: AdvancedSwapDetailsOldProps) {
+export function AdvancedSwapDetails({ trade, allowedSlippage }: AdvancedSwapDetailsProps) {
   const theme = useContext(ThemeContext)
   const { chainId } = useActiveWeb3React();
 
@@ -190,7 +190,7 @@ export function computeTradePriceBreakdown(
     realizedLPFee: realizedLPFeeAmount,
   };
 }
-export function AdvancedSwapDetails(data: {
+export function AdvancedSwapDetails2(data: {
   trade:
     | V2Trade<Currency, Currency, TradeType.EXACT_OUTPUT | TradeType.EXACT_INPUT> 
     | undefined
