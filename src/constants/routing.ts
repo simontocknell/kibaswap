@@ -77,7 +77,7 @@ export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[
  */
 export const COMMON_BASES: ChainCurrencyList = {
   [SupportedChainId.MAINNET]: [
-    new Token(SupportedChainId.MAINNET, '0x005d1123878fc55fbd56b54c73963b234a64af3c', 9, 'KIBA', 'Kiba Inu'),
+    new Token(SupportedChainId.MAINNET, '0x005d1123878fc55fbd56b54c73963b234a64af3c', 18, 'KIBA', 'Kiba Inu'),
     ExtendedEther.onChain(SupportedChainId.MAINNET),
     DAI,
     USDC,
@@ -94,7 +94,7 @@ export const COMMON_BASES: ChainCurrencyList = {
     WETH9_EXTENDED[SupportedChainId.RINKEBY],
   ],
   [SupportedChainId.BINANCE]: [
-    new Token(SupportedChainId.BINANCE, '0xc3afde95b6eb9ba8553cdaea6645d45fb3a7faf5', 9, 'KIBA', 'Kiba Inu'),
+    new Token(SupportedChainId.BINANCE, '0xc3afde95b6eb9ba8553cdaea6645d45fb3a7faf5', 18, 'KIBA', 'Kiba Inu'),
     binanceTokens.bnb,
     binanceTokens.wbnb,
     binanceTokens.busd,
