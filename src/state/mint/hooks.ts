@@ -2,7 +2,7 @@ import { t } from '@lingui/macro'
 import { useCallback, useMemo } from 'react'
 import { AppState } from '../index'
 import { Field, typeInput } from './actions'
-import { Pair } from '@uniswap/v2-sdk'
+import { Pair } from 'custom-uniswap-v2-sdk'
 import { Currency, Token, Percent, Price, CurrencyAmount } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
 import { PairState, useV2Pair } from '../../hooks/useV2Pairs'
@@ -85,9 +85,9 @@ export function useDerivedMintInfo(
     Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
     Boolean(
       pairState === PairState.EXISTS &&
-        pair &&
-        JSBI.equal(pair.reserve0.quotient, ZERO) &&
-        JSBI.equal(pair.reserve1.quotient, ZERO)
+      pair &&
+      JSBI.equal(pair.reserve0.quotient, ZERO) &&
+      JSBI.equal(pair.reserve1.quotient, ZERO)
     )
 
   // balances

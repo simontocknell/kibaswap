@@ -22,7 +22,7 @@ import ENS_PUBLIC_RESOLVER_ABI from 'abis/ens-public-resolver.json'
 import ERC20_ABI from 'abis/erc20.json'
 import ERC20_BYTES32_ABI from 'abis/erc20_bytes32.json'
 import { abi as GOVERNANCE_ABI } from '@uniswap/governance/build/GovernorAlpha.json'
-import { abi as IKibaSwapRelayerABI } from '../IKibaSwapRelayerABI.json'
+import { abi as IKibaSwapRelayerABI } from '..../../config/abis/IKibaSwapRelayerABI.json'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { KibaNftABI } from 'constants/kiba-nft-abi'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
@@ -72,7 +72,7 @@ export function useV2MigratorContract() {
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean) {
-  const {chainId} = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
   const ABI = React.useMemo(() => (!chainId || chainId === 1) ? ERC20_ABI : chainId === 56 ? bep20abi : ERC20_ABI, [chainId])
   return useContract<any>(tokenAddress, ABI, withSignerIfPossible)
 }

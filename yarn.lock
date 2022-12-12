@@ -4736,7 +4736,7 @@
     "@uniswap/v2-sdk" "^3.0.1"
     "@uniswap/v3-sdk" "^3.8.3"
 
-"@uniswap/sdk-core@^3.0.0-alpha.3", "@uniswap/sdk-core@^3.0.1":
+"@uniswap/sdk-core@^3.0.0-alpha.3", "@uniswap/sdk-core@^3.0.1", "@uniswap/sdk-core@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@uniswap/sdk-core/-/sdk-core-3.1.0.tgz#595b6396763fd2553531423c8eec83bfb4840a27"
   integrity sha512-YRrp6vYAbYmi3uDXQGkvj2eT8BMpNnUdCFb8GifDG0Ei+ohIpC4RNAB+5/ru3zR2Byhx8VahGrSKuvdd6BVMyA==
@@ -8338,6 +8338,17 @@ csstype@^3.0.2, csstype@^3.0.7:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.1.tgz#841b532c45c758ee546a11d5bd7b7b473c8c30b9"
   integrity sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==
+
+custom-uniswap-v2-sdk@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/custom-uniswap-v2-sdk/-/custom-uniswap-v2-sdk-3.2.0.tgz#1054b1e614e95718b6210cf69030c5e5cb7f81c9"
+  integrity sha512-tKQPU93VlMAXbHexwtnlETXvgtTcF53g3+enfzP1TIphA9/lH11/0omPSfgxN0bhP6fbAZKrwiQvEY+HJegsog==
+  dependencies:
+    "@ethersproject/address" "^5.0.0"
+    "@ethersproject/solidity" "^5.0.0"
+    "@uniswap/sdk-core" "^3.0.0-alpha.3"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
 
 cyclist@^1.0.1:
   version "1.0.1"

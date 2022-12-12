@@ -1,5 +1,5 @@
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
-import { Pair, computePairAddress } from '@uniswap/v2-sdk'
+import { Pair, computePairAddress } from 'custom-uniswap-v2-sdk'
 import { Percent, Token } from '@uniswap/sdk-core'
 import { SearchPreferenceState, TokenFavorite } from './reducer'
 import {

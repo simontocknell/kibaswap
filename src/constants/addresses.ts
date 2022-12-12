@@ -1,7 +1,7 @@
 import { SupportedChainId } from './chains'
-import { FACTORY_ADDRESS as V2_FACTORY_ADDRESS } from '@uniswap/v2-sdk'
 import { FACTORY_ADDRESS as V3_FACTORY_ADDRESS } from '@uniswap/v3-sdk'
 import { constructSameAddressMap } from '../utils/constructSameAddressMap'
+import { config } from 'config'
 type AddressMap = { [chainId: number]: string }
 
 // add nft contract address here after deploying
@@ -16,13 +16,23 @@ export const MULTICALL_ADDRESS: AddressMap = {
   [SupportedChainId.ARBITRUM_RINKEBY]: '0xa501c031958F579dB7676fF1CE78AD305794d579',
   [SupportedChainId.BINANCE]: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B'
 }
-export const V2_FACTORY_ADDRESSES: AddressMap = {
-  ...constructSameAddressMap(V2_FACTORY_ADDRESS),
-  [SupportedChainId.BINANCE]: '0xca143ce32fe78f1f7019d7d551a6402fc5350c73'
-}
 
+export const V2_FACTORY_ADDRESSES: {
+  [chainId: number]: string;
+} = {
+  [SupportedChainId.BINANCE]: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
+  [SupportedChainId.MAINNET]: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+};
 
-const  _V2_ROUTER_ADDRESS: AddressMap = constructSameAddressMap('0x25553828f22bdd19a20e4f12f052903cb474a335')
+export const INIT_CODE_HASHES: {
+  [chainId: number]: string;
+} = {
+  [SupportedChainId.BINANCE]: config.PANCAKE_CODE_HASH,
+  [SupportedChainId.MAINNET]: config.MAINNET_CODE_HASH,
+
+};
+
+const _V2_ROUTER_ADDRESS: AddressMap = constructSameAddressMap('0x25553828f22bdd19a20e4f12f052903cb474a335')
 _V2_ROUTER_ADDRESS[SupportedChainId.BINANCE] = '0xacb85595c219e7fc92623a0934ed72d7968d9bf4'
 export const V2_ROUTER_ADDRESS = _V2_ROUTER_ADDRESS
 /**

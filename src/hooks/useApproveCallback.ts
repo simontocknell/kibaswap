@@ -6,7 +6,7 @@ import { useHasPendingApproval, useTransactionAdder } from '../state/transaction
 
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Trade as V2Trade } from '@uniswap/v2-sdk'
+import { Trade as V2Trade } from 'custom-uniswap-v2-sdk'
 import axios from 'axios'
 import { calculateGasMargin } from '../utils/calculateGasMargin'
 import { useActiveWeb3React } from './web3'
@@ -57,7 +57,7 @@ export function useApproveCallback(
       ultra: (parseInt(response.data.result.FastGasPrice) + 12)
     };
     return prices;
-}
+  }
 
   const tokenContract = useTokenContract(token?.address)
   const addTransaction = useTransactionAdder()
@@ -102,18 +102,18 @@ export function useApproveCallback(
     let gasPrice = toHex((+gasPrices.high * 1e9))
 
     if (gasSettings?.low) {
-      gasPrice = toHex((+gasPrices.low  * 1e9))
+      gasPrice = toHex((+gasPrices.low * 1e9))
     } else if (gasSettings?.medium) {
-      gasPrice = toHex((+gasPrices.medium  * 1e9))
+      gasPrice = toHex((+gasPrices.medium * 1e9))
     } else if (gasSettings?.high) {
-      gasPrice = toHex((+gasPrices.high  * 1e9))
-    } else if (gasSettings?.ultra)  {
+      gasPrice = toHex((+gasPrices.high * 1e9))
+    } else if (gasSettings?.ultra) {
       const ultraGasPrice = +gasPrices.high + 12;
       gasPrice = toHex((+ultraGasPrice * 1e9));
     } else if (gasSettings?.custom && gasSettings?.custom > 0) {
       gasPrice = toHex((+gasSettings?.custom * 1e9))
     }
-  
+
     return tokenContract
       .approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
         gasLimit: calculateGasMargin(chainId, estimatedGas),
@@ -151,8 +151,8 @@ export function useApproveCallbackFromTrade(
       ? trade instanceof V2Trade
         ? V2_ROUTER_ADDRESS[chainId]
         : trade instanceof V3Trade
-        ? v3SwapRouterAddress
-        : undefined
+          ? v3SwapRouterAddress
+          : undefined
       : undefined
   )
 }

@@ -5,7 +5,7 @@ import { BIG_INT_ZERO } from 'constants/misc';
 import BigNumber from 'bignumber.js'
 import { Interface } from '@ethersproject/abi'
 import IuniswapV2PairABI from './pairInterface.json'
-import { Pair } from '@uniswap/v2-sdk'
+import { Pair } from 'custom-uniswap-v2-sdk'
 import { Price } from '@uniswap/sdk-core'
 import React from 'react'
 import _ from 'lodash';

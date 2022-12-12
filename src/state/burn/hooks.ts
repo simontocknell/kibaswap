@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro'
 import JSBI from 'jsbi'
 import { Token, Currency, Percent, CurrencyAmount } from '@uniswap/sdk-core'
-import { Pair } from '@uniswap/v2-sdk'
+import { Pair } from 'custom-uniswap-v2-sdk'
 import { useV2Pair } from '../../hooks/useV2Pairs'
 import { useTotalSupply } from '../../hooks/useTotalSupply'
 import { useCallback, useState } from "react";
@@ -80,8 +80,8 @@ export default function useGasPrice(): number | undefined {
     chainId && isEthereumChain(chainId)
       ? 15000
       : chainId && GAS_STATION[chainId as ChainId]
-      ? 60000
-      : null)
+        ? 60000
+        : null)
 
   return gasPrice;
 }
@@ -121,23 +121,23 @@ export function useDerivedBurnInfo(
   const totalSupply = useTotalSupply(pair?.liquidityToken)
   const liquidityValueA =
     pair &&
-    totalSupply &&
-    userLiquidity &&
-    tokenA &&
-    // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
-    JSBI.greaterThanOrEqual(totalSupply.quotient, userLiquidity.quotient)
+      totalSupply &&
+      userLiquidity &&
+      tokenA &&
+      // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
+      JSBI.greaterThanOrEqual(totalSupply.quotient, userLiquidity.quotient)
       ? CurrencyAmount.fromRawAmount(tokenA, pair.getLiquidityValue(tokenA, totalSupply, userLiquidity, false).quotient)
       : undefined
   const liquidityValueB =
     pair &&
-    totalSupply &&
-    userLiquidity &&
-    tokenB &&
-    // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
-    JSBI.greaterThanOrEqual(totalSupply.quotient, userLiquidity.quotient)
+      totalSupply &&
+      userLiquidity &&
+      tokenB &&
+      // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
+      JSBI.greaterThanOrEqual(totalSupply.quotient, userLiquidity.quotient)
       ? CurrencyAmount.fromRawAmount(tokenB, pair.getLiquidityValue(tokenB, totalSupply, userLiquidity, false).quotient)
       : undefined
-  const liquidityValues: { [Field.CURRENCY_A]?: CurrencyAmount<Token>; [Field.CURRENCY_B]?: CurrencyAmount<Token> } = {
+  const liquidityValues: { [Field.CURRENCY_A]?: CurrencyAmount<Token>;[Field.CURRENCY_B]?: CurrencyAmount<Token> } = {
     [Field.CURRENCY_A]: liquidityValueA,
     [Field.CURRENCY_B]: liquidityValueB,
   }
@@ -177,9 +177,9 @@ export function useDerivedBurnInfo(
     [Field.LIQUIDITY]:
       userLiquidity && percentToRemove && percentToRemove.greaterThan('0')
         ? CurrencyAmount.fromRawAmount(
-            userLiquidity.currency,
-            percentToRemove.multiply(userLiquidity.quotient).quotient
-          )
+          userLiquidity.currency,
+          percentToRemove.multiply(userLiquidity.quotient).quotient
+        )
         : undefined,
     [Field.CURRENCY_A]:
       tokenA && percentToRemove && percentToRemove.greaterThan('0') && liquidityValueA

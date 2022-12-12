@@ -17,7 +17,7 @@ import { TYPE } from '../../theme'
 import { Text } from 'rebass'
 import TradePrice from '../swap/TradePrice'
 import { Trans } from '@lingui/macro'
-import { Trade as V2Trade } from '@uniswap/v2-sdk'
+import { Trade as V2Trade } from 'custom-uniswap-v2-sdk'
 import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import { computeFiatValuePriceImpact } from '../../utils/computeFiatValuePriceImpact'
 

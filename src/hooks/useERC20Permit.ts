@@ -1,6 +1,6 @@
 import JSBI from 'jsbi'
 import { Percent, CurrencyAmount, Currency, TradeType, Token } from '@uniswap/sdk-core'
-import { Trade as V2Trade } from '@uniswap/v2-sdk'
+import { Trade as V2Trade } from 'custom-uniswap-v2-sdk'
 import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import { splitSignature } from 'ethers/lib/utils'
 import { useMemo, useState } from 'react'
@@ -184,31 +184,31 @@ function useERC20Permit(
 
         const message = allowed
           ? {
-              holder: account,
-              spender,
-              allowed,
-              nonce: nonceNumber,
-              expiry: signatureDeadline,
-            }
+            holder: account,
+            spender,
+            allowed,
+            nonce: nonceNumber,
+            expiry: signatureDeadline,
+          }
           : {
-              owner: account,
-              spender,
-              value,
-              nonce: nonceNumber,
-              deadline: signatureDeadline,
-            }
+            owner: account,
+            spender,
+            value,
+            nonce: nonceNumber,
+            deadline: signatureDeadline,
+          }
         const domain = permitInfo.version
           ? {
-              name: permitInfo.name,
-              version: permitInfo.version,
-              verifyingContract: tokenAddress,
-              chainId,
-            }
+            name: permitInfo.name,
+            version: permitInfo.version,
+            verifyingContract: tokenAddress,
+            chainId,
+          }
           : {
-              name: permitInfo.name,
-              verifyingContract: tokenAddress,
-              chainId,
-            }
+            name: permitInfo.name,
+            verifyingContract: tokenAddress,
+            chainId,
+          }
         const data = JSON.stringify({
           types: {
             EIP712Domain: permitInfo.version ? EIP712_DOMAIN_TYPE : EIP712_DOMAIN_TYPE_NO_VERSION,

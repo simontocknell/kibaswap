@@ -53,7 +53,7 @@ import TokenWarningModal from '../../components/TokenWarningModal'
 import TradePrice from '../../components/swap/TradePrice'
 import { Trans } from '@lingui/macro'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
-import { Trade as V2Trade } from '@uniswap/v2-sdk'
+import { Trade as V2Trade } from 'custom-uniswap-v2-sdk'
 import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import { V3TradeState } from '../../hooks/useBestV3Trade'
 import _ from 'lodash'
@@ -705,7 +705,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <SwapHeader view={view} onViewChange={onViewChangeFn} allowedSlippage={allowedSlippage} />
 
         <AddressManager isOpen={showAddressManager} onDismiss={dismissAddressManager} />
-        {!isBinance && (
+        {(
           <>
                   {view === 'swap' && chainId && chainId === 1 && <SwapSubHeader allowedSlippage={allowedSlippage}/>}
 
@@ -1038,10 +1038,6 @@ export default function Swap({ history }: RouteComponentProps) {
         {view === 'limit' &&
           <Wrapper style={{ width: '100%', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0  }}>
             <LimitOrders />
-          </Wrapper>}
-        {!!isBinance && view === 'swap' && binanceSwapURL &&
-          <Wrapper style={{ width: '100%', padding: '0', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }}>
-            <iframe style={{ display: 'flex', justifyContent: 'center', height: 477, width: '100%', background: 'transparent !important' }} src={binanceSwapURL} />
           </Wrapper>}
       </AppBody>
 

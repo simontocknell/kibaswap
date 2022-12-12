@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro'
 import { Token, CurrencyAmount } from '@uniswap/sdk-core'
-import { Pair } from '@uniswap/v2-sdk'
+import { Pair } from 'custom-uniswap-v2-sdk'
 import JSBI from 'jsbi'
 import { useMemo } from 'react'
 import { DAI, UNI, USDC, USDT, WBTC, WETH9_EXTENDED } from '../../constants/tokens'
@@ -82,13 +82,13 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
     () =>
       chainId
         ? STAKING_REWARDS_INFO[chainId]?.filter((stakingRewardInfo) =>
-            pairToFilterBy === undefined
-              ? true
-              : pairToFilterBy === null
+          pairToFilterBy === undefined
+            ? true
+            : pairToFilterBy === null
               ? false
               : pairToFilterBy.involvesToken(stakingRewardInfo.tokens[0]) &&
-                pairToFilterBy.involvesToken(stakingRewardInfo.tokens[1])
-          ) ?? []
+              pairToFilterBy.involvesToken(stakingRewardInfo.tokens[1])
+        ) ?? []
         : [],
     [chainId, pairToFilterBy]
   )
