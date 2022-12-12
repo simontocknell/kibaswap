@@ -40,6 +40,7 @@ export function computeRealizedLPFeePercent(
   return new Percent(percent.numerator, percent.denominator)
 }
 
+
 // computes price breakdown for the trade
 export function computeRealizedLPFeeAmount(
   trade?: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | null
