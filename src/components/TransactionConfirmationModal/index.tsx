@@ -21,6 +21,7 @@ import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from '../../hooks/web3'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import useTheme from 'hooks/useTheme'
+import logo from '../../assets/svg/logo.svg'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -44,6 +45,7 @@ const StyledLogo = styled.img`
   width: 16px;
   margin-left: 6px;
 `
+
 
 function ConfirmationPendingContent({
   onDismiss,
@@ -110,7 +112,11 @@ function TransactionSubmittedContent({
           </RowBetween>
         )}
         <ConfirmedIcon inline={inline}>
-          <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'} color={theme.primary1} />
+        <img
+                width={'80rem'}
+                src={logo}
+                alt="logo"
+              />
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
           <Text fontWeight={500} fontSize={20} textAlign="center">
@@ -118,7 +124,7 @@ function TransactionSubmittedContent({
           </Text>
           {chainId && hash && (
             <ExternalLink href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
-              <Text fontWeight={500} fontSize={14} color={theme.primary2}>
+              <Text fontWeight={500} fontSize={14} color={theme.textSecondary}>
                 <Trans>View on Explorer</Trans>
               </Text>
             </ExternalLink>
@@ -166,7 +172,10 @@ export function ConfirmationModalContent({
     <Wrapper style={{background:theme.bg0}}>
       <Section>
         <RowBetween>
-          <Text fontWeight={500} fontSize={16}>
+          <Text fontWeight={500} 
+                fontSize={16}
+                color={theme.text1}
+                >
             {title}
           </Text>
           <CloseIcon onClick={onDismiss} />
@@ -181,7 +190,7 @@ export function ConfirmationModalContent({
 export function TransactionErrorContent({ message, onDismiss }: { message: ReactNode; onDismiss: () => void }) {
   const theme = useContext(ThemeContext)
   return (
-    <Wrapper style={{background:'radial-gradient(#f5b642, rgba(129,3,3,.95))'}}>
+    <Wrapper style={{background:theme.bg0}}>
       <Section>
         <RowBetween>
           <Text fontWeight={500} fontSize={20}>
@@ -194,7 +203,7 @@ export function TransactionErrorContent({ message, onDismiss }: { message: React
           <Text
             fontWeight={500}
             fontSize={16}
-            color={theme.white}
+            color={theme.text1}
             style={{ textAlign: 'center', width: '85%', wordBreak: 'break-word' }}
           >
             {message}
@@ -203,7 +212,7 @@ export function TransactionErrorContent({ message, onDismiss }: { message: React
       </Section>
       <BottomSection gap="12px">
         <ButtonPrimary onClick={onDismiss}>
-          <Trans>Dismiss</Trans>
+          <Trans>Got it!</Trans>
         </ButtonPrimary>
       </BottomSection>
     </Wrapper>

@@ -112,13 +112,13 @@ export default function ClaimPopup() {
             </TYPE.white>
             <TYPE.subHeader style={{ paddingTop: '0.5rem', textAlign: 'center' }} color="white">
               <Trans>
-                Thanks for being part of the Uniswap community <Heart size={12} />
+                Thanks for being part of the KibaSwap community <Heart size={12} />
               </Trans>
             </TYPE.subHeader>
           </AutoColumn>
           <AutoColumn style={{ zIndex: 10 }} justify="center">
             <ButtonPrimary padding="8px" $borderRadius="8px" width={'fit-content'} onClick={handleToggleSelfClaimModal}>
-              <Trans>Claim your UNI tokens</Trans>
+              <Trans>Claim your Kiba tokens</Trans>
             </ButtonPrimary>
           </AutoColumn>
         </StyledClaimPopup>

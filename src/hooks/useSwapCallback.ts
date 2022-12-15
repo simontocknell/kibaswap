@@ -220,8 +220,8 @@ function swapErrorToUserReadableMessage(error: any): string {
         console.error(error, reason)
         return t`An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: fee on transfer and rebase tokens are incompatible with Uniswap V3.`
       }
-      return t`Unknown error${reason ? `: "${reason}"` : ''
-        }. Try increasing your slippage tolerance. Note: fee on transfer and rebase tokens are incompatible with Uniswap V3.`
+      return t`Error${reason ? `: ${reason}` : ''
+        }. Normally this means your slippage is too low, try increasing your slippage tolerance in settings. Even if tax is 0% on a token the price will slip slightly on every transaction.`
   }
 }
 
