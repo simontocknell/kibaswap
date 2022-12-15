@@ -55,15 +55,12 @@ import Vote from './Vote'
 import VotePage from './Vote/VotePage'
 import VotePageV2 from './Vote/VotePageV2'
 import Web3ReactManager from '../components/Web3ReactManager'
-import btok from '../assets/sponsors/btok2.svg'
-import cart from '../assets/sponsors/cryptocart.svg'
-import logo from '../assets/images/download.png'
 import styled from 'styled-components/macro'
 import { useDarkModeManager } from 'state/user/hooks'
 import useTheme from 'hooks/useTheme'
-import { useWalletModalToggle } from 'state/application/hooks';
+import { useWalletModalToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
-import { isMobile } from 'react-device-detect';
+import  Snowfall  from 'react-snowfall'
 
 const AppWrapper = styled.div<{ embedModel: EmbedModel }>`
   display: flex;
@@ -158,7 +155,6 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-
       <Route component={DarkModeQueryParamReader} />
       <Route component={ApeModeQueryParamReader} />
       <HashRouter>
@@ -174,6 +170,8 @@ export default function App() {
             >
               <ApolloProvider client={(!chainId || chainId && chainId === 1) ? client : chainId && chainId === 56 ? bscClient : client}>
                 <AppWrapper embedModel={embedModel}>
+                              
+
                   <HeaderWrapper>
                     {(embedModel.embedMode == false || embedModel.showTrending) && <TopTokenMovers />}
                     {embedModel.embedMode == false && <Header />}
@@ -187,8 +185,11 @@ export default function App() {
                       <img style={{maxWidth:200}} src={'https://kibainu.space/wp-content/uploads/2021/11/photo_2021-11-07-22.25.47.jpeg'} />
                   </div> 
                 */}
-                
+                            
+
                   <BodyWrapper  embed={embedModel.embedMode}>
+                  <Snowfall/>
+
                     <SwapTokenForTokenComponent />
                     <Popups />
                     {!isMobile && <>
@@ -352,8 +353,9 @@ export default function App() {
 
 
                   </BodyWrapper>
-
+                  
                 </AppWrapper>
+               
               </ApolloProvider>
             </GelatoProvider>
 
