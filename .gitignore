@@ -8,6 +8,7 @@
 /src/locales/**/*.json
 /src/locales/**/en-US.po
 /src/state/data/generated.ts
+/src/contracts
 
 # dependencies
 /node_modules
