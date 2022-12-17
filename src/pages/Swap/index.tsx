@@ -408,26 +408,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const { router } = useRouterABI()
 
-  const manualRefresh = React.useCallback(() => {
-    if (router && parsedAmounts[Field.INPUT] && parsedAmounts[Field.OUTPUT]) {
-      const route = trade?.route
-      const amountIn = ethers.BigNumber.from(parsedAmounts[Field.INPUT]?.toFixed(0))
-
-      console.log(`params`, { amountIn, route: (route as any)?.path?.map((a: any) => a?.isNative ? a?.wrapped?.address : a.address) })
-
-      router?.getAmountsOut(amountIn, (route as any)?.path?.map((a: any) => a?.isNative ? a?.wrapped?.address : a.address)).then((response: any[]) => {
-        console.log(`routerResponse`, response)
-        const amountOut = response[response.length - 1] * 10 ** (parsedAmounts[Field.OUTPUT]?.currency?.decimals || 18)
-        const curramt = CurrencyAmount.fromRawAmount(parsedAmounts[Field.OUTPUT]?.currency as any, amountOut)
-        console.log(`parsedCurrencyAmt`, ethers.utils.formatEther(amountOut))
-        console.log(`currencyAmt`, curramt)
-        if (curramt) {
-          parsedAmounts[Field.OUTPUT] = curramt
-        }
-      })
-    }
-  }, [router, parsedAmounts])
-
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
     trade,
@@ -755,7 +735,6 @@ export default function Swap({ history }: RouteComponentProps) {
                 {chainId && chainId === 1 && useAutoSlippage && automaticCalculatedSlippage >= 0 && <Badge style={{ marginBottom: 3 }} variant={BadgeVariant.DEFAULT}>
                   Using {automaticCalculatedSlippage}% Auto Slippage</Badge>}
 
-                <ButtonGray onClick={manualRefresh}>Refresh Price</ButtonGray>
 
                 <div style={{ display: 'relative' }}>
                   <CurrencyInputPanel
