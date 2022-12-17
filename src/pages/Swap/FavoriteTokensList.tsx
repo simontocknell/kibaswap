@@ -1,5 +1,5 @@
 import { ButtonConfirmed, ButtonError } from 'components/Button'
-import {CNav, CNavItem, CNavLink, CTabContent, CTabPane, CTable, CTableBody, CTableCaption, CTableDataCell, CTableFoot, CTableHead, CTableHeaderCell, CTableRow, CTooltip} from '@coreui/react'
+import { CNav, CNavItem, CNavLink, CTabContent, CTabPane, CTable, CTableBody, CTableCaption, CTableDataCell, CTableFoot, CTableHead, CTableHeaderCell, CTableRow, CTooltip } from '@coreui/react'
 import { ChevronDown, ChevronUp, Info, MinusCircle } from 'react-feather'
 import React, { useEffect, useMemo } from 'react'
 import { StyledInternalLink, TYPE } from 'theme'
@@ -16,6 +16,7 @@ import Tooltip from 'components/Tooltip'
 import _ from 'lodash'
 import { abbreviateNumber } from 'components/BurntKiba'
 import moment from 'moment'
+import styled from 'styled-components/macro'
 import { toChecksum } from 'state/logs/utils'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useCurrency } from 'hooks/Tokens'
@@ -35,16 +36,24 @@ type TabsListProps = {
     onActiveChanged: (newActive: Tab) => void
 }
 
+const ButtonWrapper = styled.div`
+display:flex;
+justify-content: start;
+align-items:center;
+column-gap:10px;
+`
+
 const FavoriteTokenRow = (
     props: {
         account?: string | null,
         token: any,
         removeFromFavorites: (token: any) => void,
         setTokenModal: (token: any) => void,
-        onTokenBalanceLoaded: (tokenBalanceInUsd: number, tokenAddress: string) => void
+        onTokenBalanceLoaded: (tokenBalanceInUsd: number, tokenAddress: string) => void,
+        refreshState: { toggled: boolean }
     }
 ) => {
-    const { token, removeFromFavorites, onTokenBalanceLoaded, account, setTokenModal } = props
+    const { token, removeFromFavorites, onTokenBalanceLoaded, account, setTokenModal, refreshState } = props
     const currency = useCurrency(toChecksum(token.tokenAddress))
     const currencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
     const tokenBalanceUsd = useUSDCValue(currencyBalance)
@@ -77,6 +86,12 @@ const FavoriteTokenRow = (
     }, [pair?.priceUsd])
 
     useEffect(() => {
+        if (refreshState.toggled) {
+            usdcAndEthFormatted?.refetch()
+        }
+    }, [refreshState.toggled])
+
+    useEffect(() => {
         if (usdcAndEthFormatted?.value?.[0]) {
             onTokenBalanceLoaded(+usdcAndEthFormatted?.value?.[0]?.replace(',', ''), token.tokenAddress)
         } else if (tokenBalanceUsd) {
@@ -100,13 +115,13 @@ const FavoriteTokenRow = (
             <CTableDataCell>{token.tokenSymbol}</CTableDataCell>
             <CTableDataCell>${pair?.priceUsd ?? 'Not available'} / ${abbreviateNumber(pair?.fdv) ?? 'Not available'}</CTableDataCell>
             <CTableDataCell>
-                <TYPE.main style={{alignItems:'center', display:'flex'}}>{currencyBalance ? Number(currencyBalance?.toFixed(2)).toLocaleString() + ' ' + token.tokenSymbol + ' / ' : <Loader />}
+                <TYPE.main style={{ alignItems: 'center', display: 'flex' }}>{currencyBalance ? Number(currencyBalance?.toFixed(2)).toLocaleString() + ' ' + token.tokenSymbol + ' / ' : <Loader />}
 
                     {tokenBalanceUsd && <span style={{ marginLeft: 5 }}> ${Number(tokenBalanceUsd.toFixed(2)).toLocaleString()} USD </span>}
 
                     {!tokenBalanceUsd && currencyBalance && currencyBalance?.toFixed(0) != '0' && usdcAndEthFormatted && <span style={{ marginLeft: 5 }}>${usdcAndEthFormatted.value[0]} USD</span>}
 
-                   {Boolean(lastUpdated) && <div style={{display:'inline-flex', alignItems:'center',marginLeft:5}}><CTooltip placement="auto" content={`Last Updated: ${moment(lastUpdated).fromNow()}`} >
+                    {Boolean(lastUpdated) && <div style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 5 }}><CTooltip placement="auto" content={`Last Updated: ${moment(lastUpdated).fromNow()}`} >
                         <Info size={18} onMouseEnter={show} onMouseLeave={unshow} />
                     </CTooltip> </div>}
                 </TYPE.main>
@@ -171,9 +186,20 @@ export const FavoriteTokensList = () => {
         , [favoriteTokens]
     )
 
+    const [refreshState, setRefreshState] = React.useState({
+        toggled: false
+    })
+
     const [tokenMap, setTokenMap] = React.useState<Record<string, number>>({})
 
     const { account } = useActiveWeb3React()
+
+    const tryRefresh = () => {
+        setRefreshState({ toggled: true })
+        setTimeout(() => {
+            setRefreshState({ toggled: false })
+        }, 5000)
+    }
 
     const theme = useTheme()
     const [isAddOpen, setIsAddOpen] = React.useState(false)
@@ -211,7 +237,10 @@ export const FavoriteTokensList = () => {
                         <CTableCaption style={{ color: theme.text1 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <TYPE.main>Favorited Tokens</TYPE.main>
-                                <ButtonConfirmed onClick={openAddModal} style={{ padding: 3, width: 175 }}>Add Token</ButtonConfirmed>
+                                <ButtonWrapper>
+                                    <ButtonConfirmed onClick={tryRefresh} style={{ padding: 3, marginRight: 5, width: 175 }}>Refresh Prices</ButtonConfirmed>
+                                    <ButtonConfirmed onClick={openAddModal} style={{ padding: 3, width: 175 }}>Add Token</ButtonConfirmed>
+                                </ButtonWrapper>
                             </div>
                         </CTableCaption>
 
@@ -232,6 +261,7 @@ export const FavoriteTokensList = () => {
                             </CTableRow>}
                             {favTokens.map((token) => (
                                 <FavoriteTokenRow
+                                    refreshState={refreshState}
                                     onTokenBalanceLoaded={onTokenBalanceLoaded}
                                     setTokenModal={setTokenModal}
                                     removeFromFavorites={removeFromFavorites}
