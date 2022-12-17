@@ -1,3 +1,5 @@
+import * as ethers from 'ethers'
+
 import { AlertOctagon, ArrowDown, ArrowLeft, ArrowUpRight, CheckCircle, ChevronRight, Circle, HelpCircle, Info } from 'react-feather'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { ArrowWrapper, Dots, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
@@ -20,6 +22,7 @@ import {
   useSwapState,
 } from '../../state/swap/hooks'
 import { useExpertModeManager, useSetAutoSlippage, useSetUserSlippageTolerance, useUserDetectRenounced, useUserSingleHopOnly } from '../../state/user/hooks'
+import { useKiba, useRouterABI } from 'pages/Vote/VotePage'
 import useToggledVersion, { Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 
@@ -69,7 +72,6 @@ import useENSAddress from '../../hooks/useENSAddress'
 import useIsArgentWallet from '../../hooks/useIsArgentWallet'
 import { useIsMobile } from './SelectiveCharting'
 import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
-import { useKiba } from 'pages/Vote/VotePage'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useUSDCValueV2AndV3 } from '../../hooks/useUSDCPrice'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -400,8 +402,31 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [approvalState, approvalSubmitted])
 
+
   const maxInputAmount: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[Field.INPUT]?.equalTo(maxInputAmount))
+
+  const { router } = useRouterABI()
+
+  const manualRefresh = React.useCallback(() => {
+    if (router && parsedAmounts[Field.INPUT] && parsedAmounts[Field.OUTPUT]) {
+      const route = trade?.route
+      const amountIn = ethers.BigNumber.from(parsedAmounts[Field.INPUT]?.toFixed(0))
+
+      console.log(`params`, { amountIn, route: (route as any)?.path?.map((a: any) => a?.isNative ? a?.wrapped?.address : a.address) })
+
+      router?.getAmountsOut(amountIn, (route as any)?.path?.map((a: any) => a?.isNative ? a?.wrapped?.address : a.address)).then((response: any[]) => {
+        console.log(`routerResponse`, response)
+        const amountOut = response[response.length - 1] * 10 ** (parsedAmounts[Field.OUTPUT]?.currency?.decimals || 18)
+        const curramt = CurrencyAmount.fromRawAmount(parsedAmounts[Field.OUTPUT]?.currency as any, amountOut)
+        console.log(`parsedCurrencyAmt`, ethers.utils.formatEther(amountOut))
+        console.log(`currencyAmt`, curramt)
+        if (curramt) {
+          parsedAmounts[Field.OUTPUT] = curramt
+        }
+      })
+    }
+  }, [router, parsedAmounts])
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -700,15 +725,16 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
 
-      <AppBody style={{ background: 'none', marginTop: 0, paddingTop: 0, position: 'relative'}}>
+      <AppBody style={{ background: 'none', marginTop: 0, paddingTop: 0, position: 'relative' }}>
         <SwapHeader view={view} onViewChange={onViewChangeFn} allowedSlippage={allowedSlippage} />
 
         <AddressManager isOpen={showAddressManager} onDismiss={dismissAddressManager} />
         {(
           <>
-                  {view === 'swap' && chainId && <SwapSubHeader allowedSlippage={allowedSlippage}/>}
+            {view === 'swap' && chainId && <SwapSubHeader allowedSlippage={allowedSlippage} />}
 
-            {view === 'swap' && <Wrapper id="swap-page" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, paddingTop: 5}}>
+            {view === 'swap' && <Wrapper id="swap-page" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, paddingTop: 5 }}>
+
               <ConfirmSwapModal
                 isOpen={showConfirm}
                 trade={trade}
@@ -722,12 +748,15 @@ export default function Swap({ history }: RouteComponentProps) {
                 swapErrorMessage={swapErrorMessage}
                 onDismiss={handleConfirmDismiss}
               />
-            
 
-              
+
+
               <AutoColumn gap={'xs'}>
                 {chainId && chainId === 1 && useAutoSlippage && automaticCalculatedSlippage >= 0 && <Badge style={{ marginBottom: 3 }} variant={BadgeVariant.DEFAULT}>
                   Using {automaticCalculatedSlippage}% Auto Slippage</Badge>}
+
+                <ButtonGray onClick={manualRefresh}>Refresh Price</ButtonGray>
+
                 <div style={{ display: 'relative' }}>
                   <CurrencyInputPanel
                     label={
@@ -760,11 +789,11 @@ export default function Swap({ history }: RouteComponentProps) {
                     value={formattedAmounts[Field.OUTPUT]}
                     onUserInput={handleTypeOutput}
                     label={
-                      independentField === Field.INPUT && !showWrap ? 
+                      independentField === Field.INPUT && !showWrap ?
                         <Trans>
                           <> To (at least)  </>
-                        </Trans> : 
-                        <Trans> 
+                        </Trans> :
+                        <Trans>
                           <>To </>
                         </Trans>
                     }
@@ -812,7 +841,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         ) : toggledVersion === Version.v2 && isTradeBetter(v2Trade, v3Trade) ? (
                           <BetterTradeLink version={Version.v3} otherTradeNonexistent={!v2Trade} />
                         ) : (
-                          toggledVersion === Version.v2 && !isBinance &&(
+                          toggledVersion === Version.v2 && !isBinance && (
                             <ButtonGray
                               width="fit-content"
                               padding="0.1rem 0.5rem 0.1rem 0.35rem"
@@ -876,7 +905,6 @@ export default function Swap({ history }: RouteComponentProps) {
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   {currencies[Field.OUTPUT] && currencies[Field.OUTPUT]?.name === 'Kiba Inu' && window.location.href.includes('swap') && <p style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={toggleShowChart}>{showChart ? 'Hide' : 'Show'} Chart <ChevronRight /></p>}
                   <Modal onDismiss={onDismiss} isOpen={showChart && !!currencies[Field.OUTPUT]?.name && (currencies[Field.OUTPUT]?.name as string) === 'Kiba Inu'}>
-                    {!cannotUseFeature && <ChartModal onDismiss={onDismiss} isOpen={showChart && !!currencies[Field.OUTPUT]?.name && (currencies[Field.OUTPUT]?.name as string) === 'Kiba Inu'} />}
                     {cannotUseFeature && <div style={{ padding: '3rem 6rem', display: 'flex', flexFlow: 'row wrap' }}>
                       <AlertOctagon /> You must hold Kiba Inu tokens to use this feature.
                     </div>}
@@ -1023,9 +1051,9 @@ export default function Swap({ history }: RouteComponentProps) {
         )
         }
         {view === 'bridge' && (
-          <Wrapper id="bridgepage" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0  }}>
+          <Wrapper id="bridgepage" style={{ background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0 }}>
             <AutoColumn>
-              <iframe style={{  margin: '0 auto', width: '100%', height: 520, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }} src="https://kiba-inu-bridgev2.netlify.app/"></iframe>
+              <iframe style={{ margin: '0 auto', width: '100%', height: 520, borderBottomRightRadius: 24, borderBottomLeftRadius: 24 }} src="https://kiba-inu-bridgev2.netlify.app/"></iframe>
             </AutoColumn>
           </Wrapper>
         )}
@@ -1035,7 +1063,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </Wrapper>}
 
         {view === 'limit' &&
-          <Wrapper style={{ width: '100%', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0  }}>
+          <Wrapper style={{ width: '100%', background: theme.bg0, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, padding: 0 }}>
             <LimitOrders />
           </Wrapper>}
       </AppBody>
