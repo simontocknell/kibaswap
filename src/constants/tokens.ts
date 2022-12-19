@@ -1,4 +1,5 @@
 import { WETH9, Token, Ether } from '@uniswap/sdk-core'
+import { binanceTokens } from 'utils/binance.tokens'
 import { UNI_ADDRESS } from './addresses'
 import { SupportedChainId } from './chains'
 
@@ -152,6 +153,7 @@ export const WETH9_EXTENDED: { [chainId: number]: Token } = {
     'WETH',
     'Wrapped Ether'
   ),
+  [SupportedChainId.BINANCE]: binanceTokens.wbnb
 }
 
 export class ExtendedEther extends Ether {

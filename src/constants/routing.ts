@@ -23,6 +23,7 @@ import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
 import { binanceTokens } from 'utils/binance.tokens'
 import JSBI from 'jsbi'
+import { BinanceNativeCurrency } from 'hooks/Shorthands'
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
@@ -95,12 +96,12 @@ export const COMMON_BASES: ChainCurrencyList = {
   ],
   [SupportedChainId.BINANCE]: [
     new Token(SupportedChainId.BINANCE, '0xc3afde95b6eb9ba8553cdaea6645d45fb3a7faf5', 18, 'KIBA', 'Kiba Inu'),
-    binanceTokens.bnb,
-    binanceTokens.wbnb,
+    WETH9_EXTENDED[SupportedChainId.BINANCE],
     binanceTokens.busd,
-    binanceTokens.cake,
     binanceTokens.dai,
-    binanceTokens.eth
+    binanceTokens.eth,
+    binanceTokens.usdc,
+    binanceTokens.usdt
   ],
   [SupportedChainId.GOERLI]: [ExtendedEther.onChain(SupportedChainId.GOERLI), WETH9_EXTENDED[SupportedChainId.GOERLI]],
   [SupportedChainId.KOVAN]: [ExtendedEther.onChain(SupportedChainId.KOVAN), WETH9_EXTENDED[SupportedChainId.KOVAN]],
