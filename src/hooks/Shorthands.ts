@@ -331,7 +331,7 @@ class MaticNativeCurrency extends NativeCurrency {
 }
 
 
-class BinanceNativeCurrency extends NativeCurrency {
+export class BinanceNativeCurrency extends NativeCurrency {
   equals(other: Currency): boolean {
     return other.isNative && other.chainId === this.chainId
   }

@@ -30,7 +30,7 @@ export interface Log {
 }
 
 export const bscClient = new ApolloClient({
-  uri: 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2',
+  uri: 'https://api.thegraph.com/subgraphs/name/vmatskiv/pancakeswap-v2',
   cache: new InMemoryCache() as any,
   defaultOptions: {
     watchQuery: {
@@ -117,9 +117,7 @@ const BscTokenFields = `
     tradeVolumeUSD
     untrackedVolumeUSD
     totalLiquidity
-    totalTransactions
     derivedBNB
-    derivedUSD
     decimals
   } 
 `
@@ -147,26 +145,20 @@ export const TOKENS_BY_PAIR_ADDRESS = (pairAddress: string) => {
       token0 {
         symbol
         id
-        totalSupply
         name
         decimals
         tradeVolume
         tradeVolumeUSD
-        txCount
         totalLiquidity
-        derivedETH
       }
       token1 {
         symbol
         id
-        totalSupply
         name
         decimals
         tradeVolume
         tradeVolumeUSD
-        txCount
         totalLiquidity
-        derivedETH
       }
     }
   }`
@@ -200,7 +192,6 @@ export const TOKEN_DATA = (tokenAddress: string, block: any, isBnb?: boolean) =>
         token1 {
           id
           symbol
-          totalSupply
         }
       }
     }
@@ -211,12 +202,10 @@ export const TOKEN_DATA = (tokenAddress: string, block: any, isBnb?: boolean) =>
 export const BSC_TOKEN_DATA = (tokenAddress: string) => {
   tokenAddress = tokenAddress.toLowerCase()
   const queryString = `
-    ${TokenFields.replace('derivedETH', '').replace('txCount', '')}
+    ${BscTokenFields}
     query tokens {
       tokens(where: {id:"${tokenAddress}"}) {
         ...TokenFields
-        derivedUSD
-        totalTransactions
         totalLiquidity
         derivedBNB
       }
@@ -235,12 +224,11 @@ export const BSC_TOKEN_DATA = (tokenAddress: string) => {
 
 export const BSC_TOKEN_DATA_BY_BLOCK_ONE = (tokenAddress: string, block: string) => {
   const queryString = `
-    ${TokenFields.replace('derivedETH', 'derivedBNB').replace('txCount', '')}
+    ${BscTokenFields.replace('derivedETH', 'derivedBNB').replace('txCount', '')}
     query tokens {
       tokens(block: {number: ${block}} where: {id:"${tokenAddress}"}) {
         ...TokenFields
         derivedUSD
-        totalTransactions
         totalLiquidity
       }
       pairs0: pairs(where: {token0: "${tokenAddress}"}, first: 2, orderBy: reserveUSD, orderDirection: desc){
@@ -258,7 +246,7 @@ export const BSC_TOKEN_DATA_BY_BLOCK_ONE = (tokenAddress: string, block: string)
 
 export const BSC_TOKEN_DATA_BY_BLOCK_TWO = (tokenAddress: string, block: string) => {
   const queryString = `
-    ${TokenFields.replace('derivedETH', '').replace('txCount', '')}
+    ${BscTokenFields.replace('derivedETH', '').replace('txCount', '')}
     query tokens {
       tokens(block: {number: ${block}} where: {id:"${tokenAddress}"}) {
         ...TokenFields
@@ -610,6 +598,7 @@ export function useTokenTransactions(tokenAddress: string, allPairsFormatted?: a
 }
 
 export const usePairs = (tokenAddress?: string) => {
+  const { chainId } = useWeb3React()
   const defaultState: any[] = []
   const tokenAddressChecked = toChecksum(tokenAddress)
   const [pairData, setPairData] = React.useReducer(function (state: any[], action: { type: any, payload: any }) {
@@ -627,7 +616,7 @@ export const usePairs = (tokenAddress?: string) => {
     TOKEN_DATA(
       tokenAddressChecked,
       null,
-      false
+      Boolean(chainId && chainId === 56)
     ),
     {
       onCompleted: (params) => {
@@ -724,27 +713,31 @@ const getEthPrice = async () => {
   return [ethPrice, ethPriceOneDay, priceChangeETH]
 }
 export function useTokenData(tokenAddress: string, interval: null | number = null) {
+  const { chainId } = useWeb3React()
   const [ethPrice, ethPriceOld, ethPricePercent] = useEthPrice()
   const [t24h, t48h] = getDeltaTimestamps()
   const blocks = useBlocksFromTimestamps([t24h, t48h])
-  const TOKEN_Q = TOKEN_DATA(tokenAddress?.toLowerCase(), null)
+  const TOKEN_Q = TOKEN_DATA(tokenAddress?.toLowerCase(), null, Boolean(chainId && chainId === 56))
   const tokenDataQ = useQuery(TOKEN_Q, {
     fetchPolicy: 'cache-and-network',
   })
 
-  tokenDataQ.subscribeToMore({
-    document: TOKEN_Q,
-    variables: {},
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) return prev;
-      return Object.assign({}, prev, {
-        ...(subscriptionData.data || {})
-      })
-    }
-  })
 
-  const token1DayQ = useQuery(TOKEN_DATA(tokenAddress?.toLowerCase(), blocks?.blocks?.[0]), { fetchPolicy: 'cache-and-network' })
-  const token2DayQ = useQuery(TOKEN_DATA(tokenAddress?.toLowerCase(), blocks?.blocks?.[1]), { fetchPolicy: 'cache-and-network' })
+  if (chainId && chainId === 1) {
+    tokenDataQ.subscribeToMore({
+      document: TOKEN_Q,
+      variables: {},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        return Object.assign({}, prev, {
+          ...(subscriptionData.data || {})
+        })
+      }
+    })
+  }
+
+  const token1DayQ = useQuery(TOKEN_DATA(tokenAddress?.toLowerCase(), blocks?.blocks?.[0], Boolean(chainId && chainId === 56)), { fetchPolicy: 'cache-and-network' })
+  const token2DayQ = useQuery(TOKEN_DATA(tokenAddress?.toLowerCase(), blocks?.blocks?.[1], Boolean(chainId && chainId === 56)), { fetchPolicy: 'cache-and-network' })
 
   return React.useMemo(() => {
     return mapTokenData(tokenDataQ.data, token1DayQ.data, token2DayQ.data, ethPrice as any, ethPriceOld as any)
@@ -965,7 +958,7 @@ const USER_BNB_SELLS = gql`query sellTransactions ($user: Bytes!) { swaps(orderB
 }`
 const TOP_TOKENS_BSC = gql`
 query trackerdata {
-  pairs(first: 20, orderBy: volumeUSD, orderDirection:desc,  where: {id_not_in:["0xa478c2975ab1ea89e8196811f51a7b7ade33eb11", "0x23fe4ee3bd9bfd1152993a7954298bb4d426698f", "0xe5ffe183ae47f1a0e4194618d34c5b05b98953a8", "0xf9c1fa7d41bf44ade1dd08d37cc68f67ae75bf92" , "0x382a9a8927f97f7489af3f0c202b23ed1eb772b5", "0xbb2b8038a1640196fbe3e38816f3e67cba72d940", "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852", "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"]}) {
+  pairs(first: 15, orderBy: volumeUSD, orderDirection:desc,  where: {id_not_in:["0xa478c2975ab1ea89e8196811f51a7b7ade33eb11", "0x23fe4ee3bd9bfd1152993a7954298bb4d426698f", "0xe5ffe183ae47f1a0e4194618d34c5b05b98953a8", "0xf9c1fa7d41bf44ade1dd08d37cc68f67ae75bf92" , "0x382a9a8927f97f7489af3f0c202b23ed1eb772b5", "0xbb2b8038a1640196fbe3e38816f3e67cba72d940", "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852", "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"]}) {
     id
     token0 {
       id
@@ -987,10 +980,8 @@ query trackerdata {
     volumeToken1
     reserveUSD
     reserveBNB
-    totalSupply
     token0Price
     token1Price
-    totalTransactions
     untrackedVolumeUSD
     volumeUSD
   }
@@ -1016,7 +1007,6 @@ query culturetokens {
     id
     token0 {
       id
-      totalSupply
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1025,7 +1015,6 @@ query culturetokens {
     }
         token1 {
       id
-      totalSupply
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1036,7 +1025,6 @@ query culturetokens {
     volumeToken1
     reserveUSD
     reserveETH
-    totalSupply
     token0Price
     token1Price
     txCount
@@ -1064,7 +1052,6 @@ query trackerdata {
     id
     token0 {
       id
-      totalSupply
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1074,7 +1061,6 @@ query trackerdata {
     }
     token1 {
       id
-      totalSupply
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1086,7 +1072,6 @@ query trackerdata {
     volumeToken1
     reserveUSD
     reserveETH
-    totalSupply
     token0Price
     token1Price
     txCount
@@ -1104,7 +1089,6 @@ query trackerdata {
     id
     token0 {
       id
-      totalSupply
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1114,7 +1098,6 @@ query trackerdata {
     }
         token1 {
       id
-      totalSupply
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1145,8 +1128,6 @@ query trackerdata {
     token0 {
       id
       derivedBNB
-      derivedUSD
-      totalTransactions
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1157,8 +1138,6 @@ query trackerdata {
     token1 {
       id
       derivedBNB
-      derivedUSD
-      totalTransactions
       totalLiquidity
       tradeVolume
       tradeVolumeUSD
@@ -1170,7 +1149,6 @@ query trackerdata {
     volumeToken1
     reserveUSD
     reserveBNB
-    totalSupply
     token0Price
     token1Price
     untrackedVolumeUSD

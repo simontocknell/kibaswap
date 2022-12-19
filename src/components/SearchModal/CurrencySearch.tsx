@@ -29,6 +29,7 @@ import useTheme from 'hooks/useTheme'
 import useToggle from 'hooks/useToggle'
 import { useTokenComparator } from './sorting'
 import { useWeb3Endpoint } from 'pages/Charts/PairSearch'
+import { BinanceNativeCurrency } from 'hooks/Shorthands'
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -160,7 +161,7 @@ export function CurrencySearch({
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, showOnlyTrumpCoins)
 
-  const ether = useMemo(() => chainId && ExtendedEther.onChain(chainId), [chainId])
+  const ether = useMemo(() => chainId && chainId === 56 ? new BinanceNativeCurrency(chainId) : ExtendedEther.onChain(chainId ?? 1), [chainId])
 
   const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()

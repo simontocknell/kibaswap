@@ -238,7 +238,7 @@ export const FavoriteTokensList = () => {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <TYPE.main>Favorited Tokens</TYPE.main>
                                 <ButtonWrapper>
-                                    <ButtonConfirmed onClick={tryRefresh} style={{ padding: 3, marginRight: 5, width: 175 }}>Refresh Prices</ButtonConfirmed>
+                                    {Boolean(favTokens?.length > 0) && <ButtonConfirmed onClick={tryRefresh} style={{ padding: 3, marginRight: 5, width: 175 }}>Refresh Prices</ButtonConfirmed>}
                                     <ButtonConfirmed onClick={openAddModal} style={{ padding: 3, width: 175 }}>Add Token</ButtonConfirmed>
                                 </ButtonWrapper>
                             </div>

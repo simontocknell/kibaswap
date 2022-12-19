@@ -171,6 +171,7 @@ const _TopTokenMovers = () => {
   const fn = (async (isIntervalled: boolean) => {
     // validate the required parameters are all met before initializing a fetch
     const shouldEffectRun = !hasEffectRan || isIntervalled;
+    console.log(`topmovers`, { allTokenData, kibaPair })
     if (shouldEffectRun) {
       if (allTokenData &&
         allTokenData.data &&

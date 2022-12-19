@@ -146,6 +146,10 @@ const CurrencyLogo = React.memo(({
     return <StyledEthereumLogo src={NativeSources[currency?.symbol?.toLowerCase() as string]} size={size} style={style} {...rest} />
   }
 
+  if (currency?.symbol?.toLowerCase() === 'kiba') {
+    return <StyledLogo symbol={'KIBA'} size={size} srcs={['https://s2.coinmarketcap.com/static/img/coins/64x64/13437.png']} alt={`${'Kiba'} Logo`} style={style} {...rest} />
+  }
+
   if (trending.some((token) => token?.address?.toLowerCase() === currency?.address?.toLowerCase())) {
     const trender = trending.find((token) => token?.address?.toLowerCase() === currency?.address?.toLowerCase());
     if (trender) return <StyledLogo symbol={trender?.symbol} size={size} srcs={[trender?.image]} alt={`${trender.name} Logo`} style={style} {...rest} />
