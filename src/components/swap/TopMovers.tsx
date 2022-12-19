@@ -88,9 +88,8 @@ export const ScrollableRow = styled.div`
   }
 `
 
-const DataCard = React.memo(({ tokenData, index }: { tokenData: any, index: number }) => {
+const DataCard = ({ tokenData, index }: { tokenData: any, index: number }) => {
   const { chainId } = useWeb3React()
-  const theme = useTheme()
   const darkMode = useIsDarkMode()
   const network = chainId == 1 ? 'ethereum' : chainId == 56 ? 'bsc' : 'ethereum'
   const route = tokenData?.pairAddress ?
@@ -152,11 +151,11 @@ const DataCard = React.memo(({ tokenData, index }: { tokenData: any, index: numb
       </GreyCard>
     </CardWrapper>
   )
-})
+}
 DataCard.displayName = 'DataCard';
 
 
-const _TopTokenMovers = React.memo(() => {
+const _TopTokenMovers = () => {
   const allTokenData = useTopPairData()
   const { chainId } = useWeb3React()
   const [allTokens, setAllTokens] = React.useState<any>([])
@@ -193,7 +192,7 @@ const _TopTokenMovers = React.memo(() => {
           }`)
 
         let kibaAddress = '0x005D1123878Fc55fbd56b54C73963b234a64af3c'
-        if (chainId&&chainId===56) {
+        if (chainId && chainId === 56) {
           kibaAddress = '0xC3afDe95B6Eb9ba8553cDAea6645D45fB3a7FAF5'
         }
 
@@ -261,8 +260,8 @@ const _TopTokenMovers = React.memo(() => {
     ], i => i.baseToken.address)
   }, [allTokens, chainId])
 
-  const mappedTokens = topPriceIncrease.filter((a: any) => !a?.symbol?.includes('SCAM') && !a?.symbol?.includes('rebass'));
-  return (
+  const mappedTokens = useMemo(() => topPriceIncrease.filter((a: any) => !a?.symbol?.includes('SCAM') && !a?.symbol?.includes('rebass')), [topPriceIncrease]);
+  return useMemo(() => (
     <DarkGreyCard style={{
       zIndex: 3,
       padding: 0,
@@ -286,7 +285,7 @@ const _TopTokenMovers = React.memo(() => {
         )
       }
     </DarkGreyCard>
-  )
-}, () => true)
+  ), [mappedTokens, allTokens, chainId])
+}
 _TopTokenMovers.displayName = 'topMovers'
 export const TopTokenMovers = _TopTokenMovers

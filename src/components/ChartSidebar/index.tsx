@@ -146,7 +146,7 @@ type ChartSidebarProps = {
     tokenInfo?: any
     buySellTax?: any
 }
-const _ChartSidebar = (props: ChartSidebarProps)  => {
+const _ChartSidebar = (props: ChartSidebarProps) => {
     const { token, holdings, buySellTax, tokenCurrency: _tokenCurrency, screenerToken, tokenData, chainId, collapsed, onCollapse, loading, tokenInfo } = props
     const isMobile = useIsMobile()
 
@@ -157,10 +157,10 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
     const [swapOpen, setSwapOpen] = React.useState(isMobile ? true : false)
     // the token the chart is viewing
     const tokenCurrency = _tokenCurrency ? _tokenCurrency : token && token.decimals && token.address ? new Token(chainId ?? 1, token.address, +token.decimals, token.symbol, token.name) : {} as Token
-    const params = useParams<{pairAddress: string}>()
+    const params = useParams<{ pairAddress: string }>()
     const isPairFavorited = useIsPairFavorited(params?.pairAddress)
     const favoritesFactory = useAddPairToFavorites()
-    
+
     const onFavoritesClick = () => {
         if (isPairFavorited) {
             favoritesFactory.removeFromFavorites(params?.pairAddress)
@@ -189,14 +189,13 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
         if (tokenInfo && tokenInfo.price && tokenInfo.price) return parseFloat(tokenInfo.price.rate.toString())
         return 0
     }, [screenerToken, tokenData, tokenInfo])
-    
+
     const totalSupplyInt = React.useMemo(() => {
         let multiplier = 1
         if (chainId == 56) {
             multiplier = 10 ** +token.decimals
 
         }
-        console.log(`TOTALSUPPLY`, tokenInfo, totalSupply)
         if (tokenData.totalSupply) {
             return tokenData?.totalSupply
         }
@@ -251,11 +250,11 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
             totalSupplyVal = +tokenData?.totalSupply
         }
         if (!totalSupplyVal || totalSupplyVal === 0) return ''
-        const hasTokenData =  !!tokenPrice || !!tokenData?.priceUSD || !!screenerToken?.priceUsd
+        const hasTokenData = !!tokenPrice || !!tokenData?.priceUSD || !!screenerToken?.priceUsd
         const hasTokenInfo = !!tokenInfo?.price && !!tokenInfo?.price?.rate
         if (!hasTokenInfo && !hasTokenData) return ''
         let price = tokenPrice
-        if (!price ) return '';
+        if (!price) return '';
         let excludingBurntValue = totalSupplyInt;
         if (amountBurnt) excludingBurntValue -= parseFloat(amountBurnt.toFixed(0))
         else if (!amountBurnt && token?.name?.toLowerCase().includes('kiba') && deadKiba)
@@ -265,7 +264,7 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
             price = parseFloat(price)
 
         return Number(parseFloat((price?.toFixed(18))) * excludingBurntValue)
-    }, [totalSupplyInt, tokenData?.totalSupply, tokenPrice, screenerToken?.fdv, token?.name,  amountBurnt])
+    }, [totalSupplyInt, tokenData?.totalSupply, tokenPrice, screenerToken?.fdv, token?.name, amountBurnt])
 
     const theme = useTheme()
     const color = theme.chartSidebar
@@ -336,11 +335,10 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
     }
 
     const isDarkMode = useIsDarkMode()
-    console.log(`[chart-side-bar]`, marketCap, screenerToken, tokenData)
 
     return (
         <Wrapper>
-            <ProSidebar  collapsed={collapsed}
+            <ProSidebar collapsed={collapsed}
                 width={'100%'}
                 style={{
                     fontSize: 12,
@@ -369,7 +367,7 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
 
                                                         <RowFixed>
                                                             <CurrencyLogo currency={tokenCurrency as Currency} size={'20px'} style={{ marginRight: '0.5rem' }} />
-                                                            <TYPE.main style={{marginLeft:8}}>{token?.symbol} ↗</TYPE.main>
+                                                            <TYPE.main style={{ marginLeft: 8 }}>{token?.symbol} ↗</TYPE.main>
 
                                                         </RowFixed>
                                                     </ExternalLink>
@@ -389,25 +387,25 @@ const _ChartSidebar = (props: ChartSidebarProps)  => {
                                             </MenuItem>)}
                                         </SidebarHeader>
 
-                                       
-                                            <React.Fragment>
+
+                                        <React.Fragment>
+                                            <MenuItem>
+                                                <TYPE.subHeader>Price</TYPE.subHeader>
+                                                <TYPE.black style={{ display: 'flex', alignItems: 'center' }}>{formattedPrice}</TYPE.black>
+                                            </MenuItem>
+                                            {!!marketCap && (
                                                 <MenuItem>
-                                                    <TYPE.subHeader>Price</TYPE.subHeader>
-                                                    <TYPE.black style={{ display: 'flex', alignItems: 'center' }}>{formattedPrice}</TYPE.black>
+                                                    <TYPE.subHeader>Market Cap (includes burnt)</TYPE.subHeader>
+                                                    <TYPE.black>${abbreviateNumber(marketCap)}</TYPE.black>
                                                 </MenuItem>
-                                                {!!marketCap && (
-                                                    <MenuItem>
-                                                        <TYPE.subHeader>Market Cap (includes burnt)</TYPE.subHeader>
-                                                        <TYPE.black>${abbreviateNumber(marketCap)}</TYPE.black>
-                                                    </MenuItem>
-                                                )}
-                                                {!!totalSupplyInt && !!tokenPrice && (
-                                                    <MenuItem>
-                                                        <TYPE.subHeader>Diluted Market Cap</TYPE.subHeader>
-                                                        <TYPE.black>${abbreviateNumber(Number(tokenPrice) * totalSupplyInt)}</TYPE.black>
-                                                    </MenuItem>
-                                                )}
-                                            </React.Fragment>
+                                            )}
+                                            {!!totalSupplyInt && !!tokenPrice && (
+                                                <MenuItem>
+                                                    <TYPE.subHeader>Diluted Market Cap</TYPE.subHeader>
+                                                    <TYPE.black>${abbreviateNumber(Number(tokenPrice) * totalSupplyInt)}</TYPE.black>
+                                                </MenuItem>
+                                            )}
+                                        </React.Fragment>
 
                                         {!tokenData?.priceUSD && !!tokenInfo && !!tokenInfo.price && !!tokenInfo?.price?.rate && _.isNumber(tokenInfo.price.rate) && <>
                                             <MenuItem>

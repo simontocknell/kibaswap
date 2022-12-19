@@ -159,9 +159,7 @@ export const fetchDexscreenerToken = (address: string) => {
         if (address) {
             const response = await axios.get<{ pairs?: Pair[], pair?: Pair }>(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
 
-            console.log(`[useDexscreenerToken] - setting state`, response.data)
             const dataSet = response?.data?.pair ? response?.data?.pair : response?.data?.pairs?.[0]
-            console.log(`[useDexscreenerToken]:response`, dataSet)
             return dataSet
         } else {
             return {}
@@ -177,9 +175,7 @@ export const useDexscreenerToken = (address?: string) => {
         if (address) {
             const response = await axios.get<{ pairs?: Pair[], pair?: Pair }>(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
 
-            console.log(`[useDexscreenerToken] - setting state`, response.data)
             const dataSet = response?.data?.pair ? response?.data?.pair : response?.data?.pairs?.[0]
-            console.log(`[useDexscreenerToken]:response`, dataSet)
             setData(dataSet)
         }
     }, [address])
@@ -196,11 +192,9 @@ export const useDexscreenerPair = (pairAddress: string, chainId?: number) => {
     React.useEffect(() => {
         if (pairAddress) {
             const chainIdValue = chainId ?? 1
-            console.log(`[useDexscreenerPair] - fetching `)
             const network = chainIdValue == 1 ? 'ethereum' : chainIdValue == 56 ? 'bsc' : 'ethereum';
             axios.get(`https://api.dexscreener.com/latest/dex/pairs/${network}/${pairAddress}`)
                 .then((response) => {
-                    console.log(`[useDexscreenerPair] - setting state`, response.data)
                     setData(response.data?.pairs?.[0])
                 })
         }
@@ -220,7 +214,6 @@ export const useTokenInfo = (chainId: number | undefined, tokenAddress: string |
         updateLoading(true)
         axios.get(`https://api.ethplorer.io/getTokenInfo/${tokenAddress}?apiKey=EK-htz4u-dfTvjqu-7YmJq`)
             .then(response => {
-                console.log(`[useTokenInfo]: token info response`, response.data);
                 setTokenInfo(response.data)
             }).finally(() => {
                 updateLoading(false)

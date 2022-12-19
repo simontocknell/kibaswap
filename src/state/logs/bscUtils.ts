@@ -635,7 +635,6 @@ export function useBscTokenTransactions(tokenAddress: string, network?: string, 
         query.stopPolling()
         return { data: [], lastFetched: new Date(), loading: false };
     }
-    console.log(`uscBscTokenTransactions`, query)
     return { pairs, data: query.data, lastFetched: new Date(), loading: query.loading };
 }
 
